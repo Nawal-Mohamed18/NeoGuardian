@@ -20,5 +20,4 @@ Django + React NICU clinical decision support.
 ### Notes
 - Copy `backend/.env.example` → `backend/.env` if setup did not (OpenAI key optional)
 - ML models are under `models/` and `assessment_model/models/` (Git LFS — pull with `git lfs pull` if missing)
-- Do not commit `.env`, `venv312/`, `node_modules/`, or `db.sqlite3`
 - Fresh DB has staff only — admit newborns in the app
