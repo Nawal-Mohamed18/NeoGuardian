@@ -1,0 +1,42 @@
+# Python
+.venv/
+venv/
+venv312/
+backend/venv312/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+*.log
+
+# Secrets & local DB
+.env
+backend/.env
+*.sqlite3
+db.sqlite3
+backend/db.sqlite3
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+*.local
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Training / generated data (app does not need these to run)
+assessment_model/dataset/
+assessment_model/scaled/
+scaled/
+engineered/
+reports/
+model_training_files/
+dataset/
+*.csv
+!frontend/**/*.csv

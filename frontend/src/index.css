@@ -1,0 +1,237 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+/* Class-based dark mode (ThemeContext toggles html.dark) — required for dark: utilities */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-background: #f6f8fb;
+  --color-foreground: #0f172a;
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
+  --color-primary: #0d9488;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #334155;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-accent: #ecfeff;
+  --color-accent-foreground: #0f766e;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #e6ebf1;
+  --color-input: #e2e8f0;
+  --color-ring: #0d9488;
+
+  --color-sidebar: #0b1f3a;
+  --color-sidebar-muted: #8ea3c0;
+  --color-sidebar-accent: #12305a;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.125rem;
+
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+/* Refined, calm scrollbars for a clinical feel */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html.dark {
+  color-scheme: dark;
+  /* Content plane — active sidebar cutout must match this exactly */
+  --color-background: #0f172a;
+  --color-foreground: #e8edf5;
+  --color-card: #1a2438;
+  --color-card-foreground: #e8edf5;
+  --color-primary: #2dd4bf;
+  --color-primary-foreground: #042f2e;
+  --color-secondary: #1a2438;
+  --color-secondary-foreground: #cbd5e1;
+  --color-muted: #1a2438;
+  --color-muted-foreground: #94a3b8;
+  --color-accent: #0f2a2a;
+  --color-accent-foreground: #5eead4;
+  --color-destructive: #f87171;
+  --color-destructive-foreground: #1a0a0a;
+  --color-border: #243044;
+  --color-input: #243044;
+  --color-ring: #2dd4bf;
+  /* Keep sidebar clearly darker than content so the light-mode cutout reads the same */
+  --color-sidebar: #020617;
+  --color-sidebar-muted: #7a8fa8;
+  --color-sidebar-accent: #0f1c30;
+}
+
+html.dark * {
+  scrollbar-color: #334155 transparent;
+}
+html.dark *::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+/* Mediline-style cut-out active nav — surface = main content bg in both themes */
+.sidebar-nav-active-surface {
+  background-color: var(--color-background);
+  border-radius: 1.25rem 0 0 1.25rem;
+  overflow: visible;
+}
+
+.sidebar-nav-active-surface::before,
+.sidebar-nav-active-surface::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  width: 0.85rem;
+  height: 0.85rem;
+  background-color: var(--color-sidebar);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sidebar-nav-active-surface::before {
+  top: -0.85rem;
+  border-bottom-right-radius: 0.85rem;
+  box-shadow: 0.28rem 0.28rem 0 0.28rem var(--color-background);
+}
+
+.sidebar-nav-active-surface::after {
+  bottom: -0.85rem;
+  border-top-right-radius: 0.85rem;
+  box-shadow: 0.28rem -0.28rem 0 0.28rem var(--color-background);
+}
+
+/* Explicit dark tokens so the cutout always merges into the content plane */
+html.dark .sidebar-nav-active-surface {
+  background-color: var(--color-background);
+}
+
+html.dark .sidebar-nav-active-surface::before,
+html.dark .sidebar-nav-active-surface::after {
+  background-color: var(--color-sidebar);
+}
+
+html.dark .sidebar-nav-active-surface::before {
+  box-shadow: 0.28rem 0.28rem 0 0.28rem var(--color-background);
+}
+
+html.dark .sidebar-nav-active-surface::after {
+  box-shadow: 0.28rem -0.28rem 0 0.28rem var(--color-background);
+}
+
+/* Auth (and other) surfaces that must stay light even when app is in dark mode */
+.force-light {
+  color-scheme: light;
+  --color-background: #f6f8fb;
+  --color-foreground: #0f172a;
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
+  --color-primary: #0d9488;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #334155;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-accent: #ecfeff;
+  --color-accent-foreground: #0f766e;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #e6ebf1;
+  --color-input: #e2e8f0;
+  --color-ring: #0d9488;
+  color: var(--color-foreground);
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(220, 38, 38, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+.pulse-dot {
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+/* Bell shakes briefly every 5s when there are active alerts */
+@keyframes bell-shake {
+  0%,
+  86%,
+  100% {
+    transform: rotate(0deg);
+  }
+  88% {
+    transform: rotate(-14deg);
+  }
+  90% {
+    transform: rotate(12deg);
+  }
+  92% {
+    transform: rotate(-10deg);
+  }
+  94% {
+    transform: rotate(8deg);
+  }
+  96% {
+    transform: rotate(-4deg);
+  }
+  98% {
+    transform: rotate(2deg);
+  }
+}
+
+.bell-vibrate {
+  transform-origin: top center;
+  animation: bell-shake 5s ease-in-out infinite;
+}
