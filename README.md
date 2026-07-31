@@ -22,7 +22,6 @@ Django + React NICU clinical decision support.
 - Connection: `DATABASE_URL` in `backend/.env` (copied from `backend/.env.example` by setup)
 - Default local URL: `postgresql://neoguardian:neoguardian@127.0.0.1:5432/neoguardian`
 - Docker service: root `docker-compose.yml` → `docker compose up -d db`
-- Schema reference: [SCHEMA.md](SCHEMA.md)
 
 If Docker is not available, install PostgreSQL yourself and point `DATABASE_URL` at it before `setup.bat`.
 
