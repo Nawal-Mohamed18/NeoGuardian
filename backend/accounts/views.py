@@ -9,8 +9,9 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 from .models import UserProfile
-from .permissions import IsAdmin
+from .permissions import IsAdmin, ensure_user_profile
 from .audit import log_audit
+from .roles import canonical_role
 from .serializers import (
     AdminCreateUserSerializer,
     AdminUpdateUserSerializer,
@@ -24,24 +25,24 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        profile = getattr(user, 'profile', None)
+        profile = ensure_user_profile(user)
         if profile:
-            token['role'] = profile.role
-            token['full_name'] = profile.full_name
+            token["role"] = canonical_role(profile.role) or profile.role
+            token["full_name"] = profile.full_name
         return token
 
     def validate(self, attrs):
         data = super().validate(attrs)
         now = timezone.now()
         self.user.last_login = now
-        self.user.save(update_fields=['last_login'])
-        profile = getattr(self.user, 'profile', None)
+        self.user.save(update_fields=["last_login"])
+        profile = ensure_user_profile(self.user)
         if profile:
             profile.last_seen_at = now
-            profile.save(update_fields=['last_seen_at'])
-        data['user'] = UserSerializer(self.user).data
+            profile.save(update_fields=["last_seen_at"])
+        data["user"] = UserSerializer(self.user).data
         if profile:
-            data['role'] = profile.role
+            data["role"] = canonical_role(profile.role) or profile.role
         return data
 
 

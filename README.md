@@ -20,4 +20,8 @@ Django + React NICU clinical decision support.
 ### Notes
 - Copy `backend/.env.example` → `backend/.env` if setup did not (OpenAI key optional)
 - ML models are under `models/` and `assessment_model/models/` (Git LFS — pull with `git lfs pull` if missing)
-- Fresh DB has staff only — admit newborns in the app
+- Do not commit `.env`, `venv312/`, or `node_modules/`
+- Starter database `backend/db.sqlite3` is included so everyone shares the same staff accounts after clone
+- Logins: admin / doctor / nurse — password `password123`
+- `setup.bat` still runs `migrate` + `seed_platform` to keep that shared DB in sync
+- After setup, admit newborns in the app to add patients

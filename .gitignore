@@ -10,12 +10,13 @@ __pycache__/
 .mypy_cache/
 *.log
 
-# Secrets & local DB
+# Secrets
 .env
 backend/.env
+
+# Local SQLite copies elsewhere — the shared starter DB is tracked
 *.sqlite3
-db.sqlite3
-backend/db.sqlite3
+!backend/db.sqlite3
 
 # Node
 frontend/node_modules/

@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 
 from accounts.models import UserProfile
+from accounts.roles import canonical_role
 
 # Exactly three staff accounts — no demo patients.
 STAFF_USERS = [
@@ -45,7 +46,17 @@ class Command(BaseCommand):
                 },
             )
 
+        # Heal any leftover profiles with legacy / invalid roles
+        fixed = 0
+        for profile in UserProfile.objects.select_related('user').all():
+            role = canonical_role(profile.role)
+            if role and role != profile.role:
+                profile.role = role
+                profile.save(update_fields=['role'])
+                fixed += 1
+
         self.stdout.write(self.style.SUCCESS(
             f'Staff ready: exactly 1 admin, 1 doctor, 1 nurse (password123). '
-            f'{created} new, {extras} extra removed. Add patients via Admit Newborn.'
+            f'{created} new, {extras} extra removed, {fixed} roles normalized. '
+            f'Add patients via Admit Newborn.'
         ))

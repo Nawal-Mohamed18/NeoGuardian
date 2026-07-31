@@ -174,8 +174,11 @@ class AdmitPatientSerializer(serializers.Serializer):
         except Pod.DoesNotExist:
             raise serializers.ValidationError("Pod not found or inactive.")
         request = self.context.get("request")
-        profile = getattr(getattr(request, "user", None), "profile", None) if request else None
-        if profile and profile.role in ("nurse", "doctor"):
+        from accounts.permissions import ensure_user_profile
+        from accounts.roles import canonical_role
+
+        profile = ensure_user_profile(getattr(request, "user", None)) if request else None
+        if profile and canonical_role(profile.role) in ("nurse", "doctor"):
             allowed = profile.assigned_pod_names()
             if pod.name not in allowed:
                 raise serializers.ValidationError(
