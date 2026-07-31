@@ -4,9 +4,9 @@ Django + React NICU clinical decision support.
 
 ## Team setup (Windows)
 
-1. Install: **Python 3.12**, **Node.js**, **Git**, **Git LFS** (`git lfs install`)
+1. Install: **Python 3.12**, **Node.js**, **Git**, **Git LFS** (`git lfs install`), **Docker Desktop** (for PostgreSQL)
 2. Clone this repo
-3. Run `setup.bat`
+3. Run `setup.bat` (starts Postgres via Docker Compose, migrates, seeds staff)
 4. Run `run.bat`
 5. Open the Vite URL (usually http://127.0.0.1:5173)
 
@@ -17,11 +17,16 @@ Django + React NICU clinical decision support.
 | doctor | password123 |
 | nurse | password123 |
 
+### Database (PostgreSQL required)
+
+- Connection: `DATABASE_URL` in `backend/.env` (copied from `backend/.env.example` by setup)
+- Default local URL: `postgresql://neoguardian:neoguardian@127.0.0.1:5432/neoguardian`
+- Docker service: root `docker-compose.yml` → `docker compose up -d db`
+- Schema reference: [SCHEMA.md](SCHEMA.md)
+
+If Docker is not available, install PostgreSQL yourself and point `DATABASE_URL` at it before `setup.bat`.
+
 ### Notes
-- Copy `backend/.env.example` → `backend/.env` if setup did not (OpenAI key optional)
 - ML models are under `models/` and `assessment_model/models/` (Git LFS — pull with `git lfs pull` if missing)
 - Do not commit `.env`, `venv312/`, or `node_modules/`
-- Starter database `backend/db.sqlite3` is included so everyone shares the same staff accounts after clone
-- Logins: admin / doctor / nurse — password `password123`
-- `setup.bat` still runs `migrate` + `seed_platform` to keep that shared DB in sync
 - After setup, admit newborns in the app to add patients
