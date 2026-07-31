@@ -14,21 +14,34 @@ if not exist "frontend\node_modules" (
   pushd frontend & call npm.cmd install & popd
 )
 
-if not exist "backend\.env" copy backend\.env.example backend\.env
+if not exist "backend\.env" (
+  copy backend\.env.example backend\.env
+  echo.
+  echo Created backend\.env from .env.example
+  echo IMPORTANT: For the shared team Neon DB, open backend\.env and set DATABASE_URL
+  echo to the connection string your lead sent you, then re-run setup.bat.
+  echo For local-only Postgres, start Docker or local Postgres first.
+  echo.
+)
 
 echo.
-echo Starting PostgreSQL (Docker Compose)...
+echo Starting PostgreSQL (Docker Compose) if DATABASE_URL looks local...
 where docker >nul 2>&1
 if %ERRORLEVEL%==0 (
-  docker compose up -d db
-  if errorlevel 1 (
-    echo WARNING: could not start Docker Postgres. Ensure DATABASE_URL in backend\.env points to a running PostgreSQL.
+  findstr /C:"127.0.0.1" backend\.env >nul 2>&1
+  if %ERRORLEVEL%==0 (
+    docker compose up -d db
+    if errorlevel 1 (
+      echo WARNING: could not start Docker Postgres. Ensure DATABASE_URL in backend\.env is correct.
+    ) else (
+      echo Waiting for Postgres to become ready...
+      timeout /t 5 /nobreak >nul
+    )
   ) else (
-    echo Waiting for Postgres to become ready...
-    timeout /t 5 /nobreak >nul
+    echo DATABASE_URL is not localhost — skipping Docker. Using remote Postgres from .env
   )
 ) else (
-  echo Docker not found. Using DATABASE_URL from backend\.env — PostgreSQL must already be running.
+  echo Docker not found. Using DATABASE_URL from backend\.env — PostgreSQL must already be reachable.
 )
 
 pushd backend

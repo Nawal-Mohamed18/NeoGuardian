@@ -4,11 +4,12 @@ Django + React NICU clinical decision support.
 
 ## Team setup (Windows)
 
-1. Install: **Python 3.12**, **Node.js**, **Git**, **Git LFS** (`git lfs install`), **Docker Desktop** (for PostgreSQL)
-2. Clone this repo
-3. Run `setup.bat` (starts Postgres via Docker Compose, migrates, seeds staff)
-4. Run `run.bat`
-5. Open the Vite URL (usually http://127.0.0.1:5173)
+1. Install: **Python 3.12**, **Node.js**, **Git**, **Git LFS** (`git lfs install`)
+2. Clone this repo (`git lfs pull` if model files look tiny)
+3. Create `backend/.env` (see Database below) — **before** or right after first `setup.bat`
+4. Run `setup.bat` (installs deps, migrates, seeds staff)
+5. Run `run.bat`
+6. Open the Vite URL (usually http://127.0.0.1:5173)
 
 ### Logins
 | User | Password |
@@ -19,13 +20,24 @@ Django + React NICU clinical decision support.
 
 ### Database (PostgreSQL required)
 
-- Connection: `DATABASE_URL` in `backend/.env` (copied from `backend/.env.example` by setup)
-- Default local URL: `postgresql://neoguardian:neoguardian@127.0.0.1:5432/neoguardian`
-- Docker service: root `docker-compose.yml` → `docker compose up -d db`
+Put this in **`backend/.env`** (file is gitignored — never commit real passwords):
 
-If Docker is not available, install PostgreSQL yourself and point `DATABASE_URL` at it before `setup.bat`.
+```text
+DEBUG=true
+DJANGO_SECRET_KEY=change-me-in-production
+DATABASE_URL=YOUR_URL_HERE
+AI_FALLBACK_ENABLED=true
+```
+
+**Shared team demo DB (recommended):** your lead sends a Neon `DATABASE_URL`. Paste that exact URL as `DATABASE_URL=...` in `backend/.env`, then run `setup.bat`. Everyone with that URL sees the same live demo data.
+
+**Local-only DB:** install PostgreSQL (or Docker Desktop + `docker compose up -d db`) and use:
+
+`DATABASE_URL=postgresql://neoguardian:neoguardian@127.0.0.1:5432/neoguardian`
+
+`setup.bat` copies `.env.example` only if `.env` is missing — edit `.env` to your real URL before migrate succeeds.
 
 ### Notes
-- ML models are under `models/` and `assessment_model/models/` (Git LFS — pull with `git lfs pull` if missing)
+- ML models are under `models/` and `assessment_model/models/` (Git LFS)
 - Do not commit `.env`, `venv312/`, or `node_modules/`
 - After setup, admit newborns in the app to add patients
