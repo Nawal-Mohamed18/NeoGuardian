@@ -48,14 +48,14 @@ export function AssignedUnitBanner({
       <div className="pointer-events-none absolute -right-8 -top-8 h-36 w-36 rounded-full bg-primary/10 blur-3xl transition-all duration-500 ease-out group-hover:-right-2 group-hover:top-auto group-hover:-bottom-10" />
       <div className="pointer-events-none absolute bottom-0 right-16 h-20 w-20 rounded-full bg-primary/5 blur-2xl transition-all duration-500 ease-out group-hover:right-auto group-hover:-left-6 group-hover:-top-8" />
 
-      <div className="relative flex flex-wrap items-start justify-between gap-3">
+      <div className="relative flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 flex-1">
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">
             {hasPods ? `Your assigned unit${pods.length > 1 ? "s" : ""}` : "No POD assigned"}
           </p>
-          <div className="mt-1 flex items-center gap-2">
-            <Building2 className="h-5 w-5 shrink-0 text-primary" />
-            <p className="truncate text-xl font-bold tracking-tight text-card-foreground sm:text-2xl">
+          <div className="mt-1 flex items-start gap-2">
+            <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-primary sm:h-5 sm:w-5" />
+            <p className="break-words text-base font-bold leading-snug tracking-tight text-card-foreground sm:text-xl">
               {hasPods ? pods.join(" · ") : "Unassigned"}
             </p>
           </div>
@@ -65,7 +65,7 @@ export function AssignedUnitBanner({
         </div>
 
         {actions.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
             {actions.map((action) => (
               <Button
                 key={action.to + action.label}
