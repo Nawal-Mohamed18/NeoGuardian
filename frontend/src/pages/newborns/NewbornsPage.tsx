@@ -351,19 +351,19 @@ export default function NewbornsPage() {
                       )}
                     </div>
                     <TabsList className="h-8 min-w-0 flex-none justify-start gap-0.5 overflow-x-auto">
-                      <TabsTrigger value="overview" className="gap-1 px-2 text-xs" aria-label="Profile">
+                      <TabsTrigger value="overview" className="gap-1 px-2 text-xs" aria-label="Profile" title="Profile">
                         <UserRound className="h-3.5 w-3.5 sm:hidden" />
                         <span className="hidden sm:inline">Profile</span>
                       </TabsTrigger>
-                      <TabsTrigger value="ai" className="gap-1 px-2 text-xs" aria-label="AI Guidance">
+                      <TabsTrigger value="ai" className="gap-1 px-2 text-xs" aria-label="AI Guidance" title="AI Guidance">
                         <Sparkles className="h-3.5 w-3.5 sm:hidden" />
                         <span className="hidden sm:inline">AI Guidance</span>
                       </TabsTrigger>
-                      <TabsTrigger value="chat" className="gap-1 px-2 text-xs" aria-label="Ask AI">
+                      <TabsTrigger value="chat" className="gap-1 px-2 text-xs" aria-label="Ask AI" title="Ask AI">
                         <MessageCircle className="h-3.5 w-3.5 sm:hidden" />
                         <span className="hidden sm:inline">Ask AI</span>
                       </TabsTrigger>
-                      <TabsTrigger value="timeline" className="gap-1 px-2 text-xs" aria-label="History">
+                      <TabsTrigger value="timeline" className="gap-1 px-2 text-xs" aria-label="History" title="History">
                         <History className="h-3.5 w-3.5 sm:hidden" />
                         <span className="hidden sm:inline">History</span>
                       </TabsTrigger>
@@ -458,19 +458,19 @@ export default function NewbornsPage() {
                 )}
               </div>
               <TabsList className="h-8 min-w-0 flex-none justify-start gap-0.5 overflow-x-auto">
-                <TabsTrigger value="overview" className="gap-1 px-2 text-xs" aria-label="Profile">
+                <TabsTrigger value="overview" className="gap-1 px-2 text-xs" aria-label="Profile" title="Profile">
                   <UserRound className="h-3.5 w-3.5 sm:hidden" />
                   <span className="hidden sm:inline">Profile</span>
                 </TabsTrigger>
-                <TabsTrigger value="ai" className="gap-1 px-2 text-xs" aria-label="AI Guidance">
+                <TabsTrigger value="ai" className="gap-1 px-2 text-xs" aria-label="AI Guidance" title="AI Guidance">
                   <Sparkles className="h-3.5 w-3.5 sm:hidden" />
                   <span className="hidden sm:inline">AI Guidance</span>
                 </TabsTrigger>
-                <TabsTrigger value="chat" className="gap-1 px-2 text-xs" aria-label="Ask AI">
+                <TabsTrigger value="chat" className="gap-1 px-2 text-xs" aria-label="Ask AI" title="Ask AI">
                   <MessageCircle className="h-3.5 w-3.5 sm:hidden" />
                   <span className="hidden sm:inline">Ask AI</span>
                 </TabsTrigger>
-                <TabsTrigger value="timeline" className="gap-1 px-2 text-xs" aria-label="History">
+                <TabsTrigger value="timeline" className="gap-1 px-2 text-xs" aria-label="History" title="History">
                   <History className="h-3.5 w-3.5 sm:hidden" />
                   <span className="hidden sm:inline">History</span>
                 </TabsTrigger>
