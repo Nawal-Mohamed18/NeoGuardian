@@ -9,7 +9,7 @@ import type { Role } from "@/lib/roles";
 const MOBILE_HREFS_BY_ROLE: Record<Role, string[]> = {
   nurse: ["/", "/my-patients", "/newborns/register", "/notifications", "/chat", "/settings"],
   doctor: ["/", "/my-patients", "/newborns/register", "/notifications", "/chat", "/settings"],
-  admin: ["/", "/newborns", "/users", "/notifications", "/pods", "/reports", "/settings"],
+  admin: ["/", "/patients", "/users", "/notifications", "/pods", "/settings"],
 };
 
 export function MobileNav() {
