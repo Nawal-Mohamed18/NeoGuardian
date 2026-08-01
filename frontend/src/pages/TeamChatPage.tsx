@@ -841,6 +841,11 @@ export default function TeamChatPage() {
                         </div>
                         <div className="mt-0.5 flex min-w-0 items-center gap-1.5 overflow-hidden">
                           <RoleBadge role={conv.kind === "broadcast" ? "broadcast" : conv.role} />
+                          {conv.kind === "direct" && conv.podName ? (
+                            <span className="truncate text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                              {conv.podName}
+                            </span>
+                          ) : null}
                           {unread > 0 && (
                             <span className="shrink-0 rounded-full bg-[#EF4444] px-1.5 text-[10px] font-bold text-white">
                               {unread}
@@ -853,7 +858,7 @@ export default function TeamChatPage() {
                               (parseMessageBody(conv.lastMessage).images.length
                                 ? "Photo"
                                 : "No messages yet")
-                            : "No messages yet"}
+                            : "No messages yet — tap to start"}
                         </p>
                       </div>
                     </button>
@@ -1101,17 +1106,17 @@ export default function TeamChatPage() {
               }}
               className="shrink-0 border-t border-border bg-card px-2 py-1 pb-[max(0.25rem,env(safe-area-inset-bottom))] sm:px-3"
             >
-              <div className="mb-1 flex gap-1 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="mb-1.5 flex flex-wrap items-center gap-2">
                 <Input
                   value={patientCode}
                   onChange={(e) => setPatientCode(e.target.value)}
-                  placeholder="Patient"
-                  className="h-7 w-24 shrink-0 border-slate-200 bg-slate-50 text-[11px] text-slate-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-100"
+                  placeholder="Patient code"
+                  className="h-8 min-w-[9rem] flex-1 basis-[9rem] border-slate-200 bg-slate-50 text-xs text-slate-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-100 sm:max-w-[14rem]"
                 />
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as Priority)}
-                  className="h-7 shrink-0 rounded-md border border-border bg-slate-50 dark:bg-slate-800/70 px-1 text-[11px] font-semibold text-slate-900 dark:text-slate-100"
+                  className="h-8 min-w-[8.5rem] flex-1 basis-[8.5rem] rounded-md border border-border bg-slate-50 px-2.5 text-xs font-semibold text-slate-900 dark:bg-slate-800/70 dark:text-slate-100 sm:max-w-[11rem] sm:flex-none"
                   title="Priority tag"
                 >
                   <option value="routine">Routine</option>
@@ -1125,10 +1130,11 @@ export default function TeamChatPage() {
                       setTemplatesOpen((o) => !o);
                       setEmojiOpen(false);
                     }}
-                    className="inline-flex h-7 items-center gap-1 rounded-md border border-border bg-slate-50 dark:bg-slate-800/70 px-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:border-teal-300 hover:text-slate-900 dark:hover:text-slate-100"
+                    className="inline-flex h-8 items-center gap-1 rounded-md border border-border bg-slate-50 dark:bg-slate-800/70 px-2 text-xs font-medium text-slate-500 dark:text-slate-400 hover:border-teal-300 hover:text-slate-900 dark:hover:text-slate-100"
                     title="Quick templates"
                   >
                     <MessageSquareText className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Templates</span>
                   </button>
                   {templatesOpen && (
                     <div className="absolute bottom-full right-0 z-30 mb-1 w-64 rounded-xl border border-border bg-card py-1 shadow-lg">
