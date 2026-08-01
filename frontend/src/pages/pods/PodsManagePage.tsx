@@ -187,9 +187,9 @@ export default function PodsManagePage() {
         title="Manage PODs"
         description="Create NICU pods, set capacity, and assign clinical staff"
         action={
-          <Button type="button" onClick={openCreate}>
+          <Button type="button" size="sm" onClick={openCreate} className="shrink-0">
             <Plus className="h-4 w-4" />
-            New POD
+            <span className="ml-1">New POD</span>
           </Button>
         }
       />

@@ -28,7 +28,7 @@ export function AppLayout({ children, alertCount, immersive = false }: AppLayout
             "flex min-h-0 flex-1 flex-col",
             immersive
               ? "overflow-hidden p-0 pb-[calc(4rem+env(safe-area-inset-bottom))] lg:overflow-hidden lg:p-4 lg:pb-4"
-              : "overflow-y-auto p-4 pb-20 lg:p-5 lg:pb-5"
+              : "overflow-y-auto p-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] lg:p-5 lg:pb-5"
           )}
         >
           <div

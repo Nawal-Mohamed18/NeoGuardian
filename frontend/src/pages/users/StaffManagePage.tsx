@@ -136,9 +136,25 @@ export default function StaffManagePage() {
         title="Clinical Staff Directory"
         description="Doctors, nurses, and operators · Deactivate blocks login · Delete removes permanently"
         action={
-          <Button type="button" onClick={() => { setShowAddForm((v) => !v); setError(""); }}>
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => {
+              const opening = !showAddForm;
+              setShowAddForm(opening);
+              setError("");
+              if (opening) {
+                window.setTimeout(() => {
+                  document.getElementById("register-staff-form")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }, 80);
+              }
+            }}
+          >
             <Plus className="h-4 w-4" />
-            {showAddForm ? "Hide Form" : "Add Staff Member"}
+            {showAddForm ? "Hide Form" : "Add Staff"}
           </Button>
         }
       />
@@ -150,9 +166,13 @@ export default function StaffManagePage() {
       </div>
 
       {showAddForm && (
-        <Card className="mb-4 p-5">
+        <Card className="mb-4 overflow-visible p-5 pb-6">
           <h3 className="text-base font-semibold">Register New Staff Member</h3>
-          <form onSubmit={handleSubmit} className="mt-4 grid gap-3 sm:grid-cols-2">
+          <form
+            id="register-staff-form"
+            onSubmit={handleSubmit}
+            className="mt-4 grid gap-3 sm:grid-cols-2"
+          >
             <div className="sm:col-span-2">
               <Label>Full name *</Label>
               <Input className="mt-1" value={newStaff.full_name} onChange={(e) => setNewStaff({ ...newStaff, full_name: e.target.value })} required />

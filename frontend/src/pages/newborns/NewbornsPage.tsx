@@ -4,7 +4,10 @@ import {
   ArrowLeft,
   ChevronDown,
   ChevronUp,
+  History,
+  MessageCircle,
   Search,
+  Sparkles,
   UserRound,
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -347,18 +350,22 @@ export default function NewbornsPage() {
                         />
                       )}
                     </div>
-                    <TabsList className="h-8 min-w-0 flex-1 justify-start overflow-x-auto sm:flex-none">
-                      <TabsTrigger value="overview" className="px-2.5 text-xs">
-                        Profile
+                    <TabsList className="h-8 min-w-0 flex-none justify-start gap-0.5 overflow-x-auto">
+                      <TabsTrigger value="overview" className="gap-1 px-2 text-xs" aria-label="Profile">
+                        <UserRound className="h-3.5 w-3.5 sm:hidden" />
+                        <span className="hidden sm:inline">Profile</span>
                       </TabsTrigger>
-                      <TabsTrigger value="ai" className="px-2.5 text-xs">
-                        AI Guidance
+                      <TabsTrigger value="ai" className="gap-1 px-2 text-xs" aria-label="AI Guidance">
+                        <Sparkles className="h-3.5 w-3.5 sm:hidden" />
+                        <span className="hidden sm:inline">AI Guidance</span>
                       </TabsTrigger>
-                      <TabsTrigger value="chat" className="px-2.5 text-xs">
-                        Ask AI
+                      <TabsTrigger value="chat" className="gap-1 px-2 text-xs" aria-label="Ask AI">
+                        <MessageCircle className="h-3.5 w-3.5 sm:hidden" />
+                        <span className="hidden sm:inline">Ask AI</span>
                       </TabsTrigger>
-                      <TabsTrigger value="timeline" className="px-2.5 text-xs">
-                        History
+                      <TabsTrigger value="timeline" className="gap-1 px-2 text-xs" aria-label="History">
+                        <History className="h-3.5 w-3.5 sm:hidden" />
+                        <span className="hidden sm:inline">History</span>
                       </TabsTrigger>
                     </TabsList>
                     <AdminPatientActions patient={patient} compact />
@@ -450,18 +457,22 @@ export default function NewbornsPage() {
                   />
                 )}
               </div>
-              <TabsList className="h-8 min-w-0 flex-1 justify-start overflow-x-auto sm:flex-none">
-                <TabsTrigger value="overview" className="px-2.5 text-xs">
-                  Profile
+              <TabsList className="h-8 min-w-0 flex-none justify-start gap-0.5 overflow-x-auto">
+                <TabsTrigger value="overview" className="gap-1 px-2 text-xs" aria-label="Profile">
+                  <UserRound className="h-3.5 w-3.5 sm:hidden" />
+                  <span className="hidden sm:inline">Profile</span>
                 </TabsTrigger>
-                <TabsTrigger value="ai" className="px-2.5 text-xs">
-                  AI Guidance
+                <TabsTrigger value="ai" className="gap-1 px-2 text-xs" aria-label="AI Guidance">
+                  <Sparkles className="h-3.5 w-3.5 sm:hidden" />
+                  <span className="hidden sm:inline">AI Guidance</span>
                 </TabsTrigger>
-                <TabsTrigger value="chat" className="px-2.5 text-xs">
-                  Ask AI
+                <TabsTrigger value="chat" className="gap-1 px-2 text-xs" aria-label="Ask AI">
+                  <MessageCircle className="h-3.5 w-3.5 sm:hidden" />
+                  <span className="hidden sm:inline">Ask AI</span>
                 </TabsTrigger>
-                <TabsTrigger value="timeline" className="px-2.5 text-xs">
-                  History
+                <TabsTrigger value="timeline" className="gap-1 px-2 text-xs" aria-label="History">
+                  <History className="h-3.5 w-3.5 sm:hidden" />
+                  <span className="hidden sm:inline">History</span>
                 </TabsTrigger>
               </TabsList>
             </div>

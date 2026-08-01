@@ -72,12 +72,17 @@ export function TopNav({ alertCount }: TopNavProps) {
         <div className="flex items-center gap-2">
           <ThemeToggle />
 
-          {canAccess("/chat") && <ChatNavButton active={chatActive} />}
+          {/* Chat + Alerts live in the bottom MobileNav — hide duplicates on small screens. */}
+          {canAccess("/chat") && (
+            <span className="hidden lg:inline-flex">
+              <ChatNavButton active={chatActive} />
+            </span>
+          )}
 
           <Link
             to="/notifications"
             className={cn(
-              "relative flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:text-foreground",
+              "relative hidden h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:text-foreground lg:flex",
               "text-red-600 dark:text-red-400"
             )}
             aria-label={`Alerts${unread ? `, ${unread} unread` : ""}`}
