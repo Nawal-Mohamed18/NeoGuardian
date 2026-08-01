@@ -103,15 +103,15 @@ export default function AdminPatientsListPage() {
         <PageLoading />
       ) : (
         <div className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="min-w-0 shrink-0">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
               <h1 className="text-2xl font-bold tracking-tight">Patients</h1>
-              <p className="text-sm text-muted-foreground">
+              <p className="mt-1 text-sm text-muted-foreground">
                 All units · filter by POD · click to open chart
               </p>
             </div>
-            <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-3">
-              <div className="relative w-full min-w-48 max-w-md flex-1">
+            <div className="flex w-full min-w-0 flex-col gap-2 sm:max-w-md sm:flex-1 sm:flex-row sm:items-center sm:justify-end">
+              <div className="relative w-full min-w-0">
                 <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   value={search}
@@ -122,7 +122,7 @@ export default function AdminPatientsListPage() {
                 />
               </div>
               {can("assessment.create") && (
-                <Button asChild className="shrink-0">
+                <Button asChild className="w-full shrink-0 sm:w-auto">
                   <Link to="/newborns/register">
                     <UserPlus className="mr-1 h-4 w-4" /> Admit Newborn
                   </Link>
