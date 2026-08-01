@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Navigate, useSearchParams } from "react-router-dom";
-import { Search, UserPlus } from "lucide-react";
+import { ChevronDown, Search, UserPlus } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageLoading } from "@/components/shared/PageLoading";
 import { MortalityBadge } from "@/components/mortality/MortalityGauge";
@@ -11,7 +11,7 @@ import { usePatients } from "@/hooks/usePatients";
 import { usePods } from "@/hooks/usePods";
 import { useAuth } from "@/context/AuthContext";
 import { comparePatientsByRisk, formatClinicalNumber } from "@/lib/risk";
-import { formatAdmittedBy } from "@/lib/utils";
+import { cn, formatAdmittedBy } from "@/lib/utils";
 import type { Patient } from "@/types";
 
 type StatusFilter = "active" | "discharged";
@@ -27,9 +27,20 @@ export default function AdminPatientsListPage() {
   const statusFilter: StatusFilter =
     searchParams.get("status") === "discharged" ? "discharged" : "active";
   const [podFilter, setPodFilter] = useState<PodFilter>("all");
+  const [podMenuOpen, setPodMenuOpen] = useState(false);
+  const podMenuRef = useRef<HTMLDivElement>(null);
 
   const { data: patients = [], isLoading } = usePatients({ status: statusFilter });
   const { data: pods = [] } = usePods();
+
+  useEffect(() => {
+    if (!podMenuOpen) return;
+    function onDocClick(e: MouseEvent) {
+      if (!podMenuRef.current?.contains(e.target as Node)) setPodMenuOpen(false);
+    }
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, [podMenuOpen]);
 
   function setStatusFilter(next: StatusFilter) {
     if (next === "discharged") setSearchParams({ status: "discharged" });
@@ -136,19 +147,61 @@ export default function AdminPatientsListPage() {
               Discharged
             </Button>
             <span className="mx-1 hidden h-5 w-px bg-border sm:inline-block" />
-            <select
-              className="h-8 min-w-40 rounded-md border border-border bg-card px-2 text-sm"
-              value={podFilter}
-              onChange={(e) => setPodFilter(e.target.value as PodFilter)}
-              aria-label="Filter by POD"
-            >
-              <option value="all">All PODs</option>
-              {podOptions.map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
+            <div className="relative" ref={podMenuRef}>
+              <button
+                type="button"
+                className="inline-flex h-8 min-w-36 items-center justify-between gap-2 rounded-md border border-border bg-card px-2.5 text-xs font-medium text-foreground"
+                aria-label="Filter by POD"
+                aria-expanded={podMenuOpen}
+                onClick={() => setPodMenuOpen((o) => !o)}
+              >
+                <span className="truncate">{podFilter === "all" ? "All PODs" : podFilter}</span>
+                <ChevronDown className={cn("h-3.5 w-3.5 shrink-0 text-muted-foreground", podMenuOpen && "rotate-180")} />
+              </button>
+              {podMenuOpen && (
+                <ul
+                  role="listbox"
+                  className="absolute left-0 top-full z-40 mt-1 max-h-56 min-w-full overflow-y-auto rounded-md border border-border bg-card py-1 text-xs shadow-lg"
+                >
+                  <li>
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={podFilter === "all"}
+                      className={cn(
+                        "flex w-full px-2.5 py-1.5 text-left hover:bg-muted",
+                        podFilter === "all" && "bg-muted font-medium"
+                      )}
+                      onClick={() => {
+                        setPodFilter("all");
+                        setPodMenuOpen(false);
+                      }}
+                    >
+                      All PODs
+                    </button>
+                  </li>
+                  {podOptions.map((name) => (
+                    <li key={name}>
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={podFilter === name}
+                        className={cn(
+                          "flex w-full px-2.5 py-1.5 text-left hover:bg-muted",
+                          podFilter === name && "bg-muted font-medium"
+                        )}
+                        onClick={() => {
+                          setPodFilter(name);
+                          setPodMenuOpen(false);
+                        }}
+                      >
+                        {name}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             <span className="text-xs tabular-nums text-muted-foreground">
               {filtered.length} shown
             </span>
