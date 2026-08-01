@@ -5,14 +5,11 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { PageLoading } from "@/components/shared/PageLoading";
 import { StaffDetailModal } from "@/components/staff/StaffDetailModal";
 import { StaffEditModal } from "@/components/staff/StaffEditModal";
+import { StaffRegisterModal } from "@/components/staff/StaffRegisterModal";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { useUsers, useUpdateUser, useDeleteUser, useCreateUser } from "@/hooks/usePlatform";
-import { usePods } from "@/hooks/usePods";
-import { ROLE_LIST, type Role } from "@/lib/roles";
+import { useUsers, useUpdateUser, useDeleteUser } from "@/hooks/usePlatform";
 import {
   ROLE_BADGE_CLASS,
   ROLE_LABEL,
@@ -25,26 +22,13 @@ import { apiErrorMessage } from "@/lib/apiError";
 
 export default function StaffManagePage() {
   const { data, isLoading } = useUsers("all");
-  const { data: pods } = usePods();
-  const podOptions = (pods ?? []).filter((p) => p.is_active);
   const updateUser = useUpdateUser();
   const deleteUser = useDeleteUser();
-  const createUser = useCreateUser();
 
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
   const [viewUser, setViewUser] = useState<AuthUser | null>(null);
   const [editUser, setEditUser] = useState<AuthUser | null>(null);
   const [busyId, setBusyId] = useState<number | null>(null);
-  const [error, setError] = useState("");
-  const [newStaff, setNewStaff] = useState({
-    username: "",
-    email: "",
-    password: "",
-    full_name: "",
-    hospital: "City Children Hospital",
-    role: "nurse" as Role,
-    ward: "",
-  });
 
   const users = useMemo(() => {
     return [...(data ?? [])].sort((a, b) => {
@@ -57,43 +41,6 @@ export default function StaffManagePage() {
   const doctorCount = users.filter((u) => (u.profile?.role ?? u.role) === "doctor" && u.is_active !== false).length;
   const nurseCount = users.filter((u) => (u.profile?.role ?? u.role) === "nurse" && u.is_active !== false).length;
   const adminCount = users.filter((u) => (u.profile?.role ?? u.role) === "admin" && u.is_active !== false).length;
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    if (newStaff.password.length < 8) {
-      setError("Password must be at least 8 characters.");
-      return;
-    }
-    if (!newStaff.username.trim() || !/^[a-zA-Z0-9._-]+$/.test(newStaff.username.trim())) {
-      setError("Username is required and may only contain letters, numbers, dots, underscores, and hyphens.");
-      return;
-    }
-    if ((newStaff.role === "doctor" || newStaff.role === "nurse") && !newStaff.ward) {
-      setError("Select a POD assignment for clinical staff.");
-      return;
-    }
-    try {
-      await createUser.mutateAsync({
-        ...newStaff,
-        username: newStaff.username.trim(),
-        email: newStaff.email.trim().toLowerCase(),
-        ward: newStaff.role === "admin" ? "" : newStaff.ward,
-      });
-      setShowAddForm(false);
-      setNewStaff({
-        username: "",
-        email: "",
-        password: "",
-        full_name: "",
-        hospital: "City Children Hospital",
-        role: "nurse",
-        ward: "",
-      });
-    } catch (err) {
-      setError(apiErrorMessage(err, "Could not create this account."));
-    }
-  }
 
   async function handleDeactivate(user: AuthUser) {
     const active = user.is_active !== false;
@@ -136,25 +83,9 @@ export default function StaffManagePage() {
         title="Clinical Staff Directory"
         description="Doctors, nurses, and operators · Deactivate blocks login · Delete removes permanently"
         action={
-          <Button
-            type="button"
-            size="sm"
-            onClick={() => {
-              const opening = !showAddForm;
-              setShowAddForm(opening);
-              setError("");
-              if (opening) {
-                window.setTimeout(() => {
-                  document.getElementById("register-staff-form")?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                  });
-                }, 80);
-              }
-            }}
-          >
+          <Button type="button" size="sm" onClick={() => setShowRegister(true)}>
             <Plus className="h-4 w-4" />
-            {showAddForm ? "Hide Form" : "Add Staff"}
+            Add Staff
           </Button>
         }
       />
@@ -164,78 +95,6 @@ export default function StaffManagePage() {
         <StatCard label="Active Nurses" value={nurseCount} icon={Users} tone="emerald" delta="Primary caregivers" />
         <StatCard label="Active Admins" value={adminCount} icon={UserCog} tone="sky" delta="System operators" />
       </div>
-
-      {showAddForm && (
-        <Card className="mb-4 overflow-visible p-5 pb-6">
-          <h3 className="text-base font-semibold">Register New Staff Member</h3>
-          <form
-            id="register-staff-form"
-            onSubmit={handleSubmit}
-            className="mt-4 grid gap-3 sm:grid-cols-2"
-          >
-            <div className="sm:col-span-2">
-              <Label>Full name *</Label>
-              <Input className="mt-1" value={newStaff.full_name} onChange={(e) => setNewStaff({ ...newStaff, full_name: e.target.value })} required />
-            </div>
-            <div>
-              <Label>Username *</Label>
-              <Input className="mt-1" value={newStaff.username} onChange={(e) => setNewStaff({ ...newStaff, username: e.target.value })} required />
-            </div>
-            <div>
-              <Label>Email address *</Label>
-              <Input type="email" className="mt-1" value={newStaff.email} onChange={(e) => setNewStaff({ ...newStaff, email: e.target.value })} required />
-            </div>
-            <div>
-              <Label>Temporary password *</Label>
-              <Input type="password" className="mt-1" value={newStaff.password} onChange={(e) => setNewStaff({ ...newStaff, password: e.target.value })} minLength={8} required />
-            </div>
-            <div>
-              <Label>Role</Label>
-              <select
-                className="mt-1 h-10 w-full rounded-md border border-border bg-background px-3 text-sm"
-                value={newStaff.role}
-                onChange={(e) => setNewStaff({ ...newStaff, role: e.target.value as Role })}
-              >
-                {ROLE_LIST.map((r) => (
-                  <option key={r.key} value={r.key}>{r.label}</option>
-                ))}
-              </select>
-            </div>
-            {(newStaff.role === "nurse" || newStaff.role === "doctor") && (
-              <div className="sm:col-span-2">
-                <Label>
-                  POD assignment {newStaff.role === "doctor" ? "(required for doctors to see patients)" : "*"}
-                </Label>
-                <select
-                  className="mt-1 h-10 w-full rounded-md border border-border bg-background px-3 text-sm"
-                  value={newStaff.ward}
-                  onChange={(e) => setNewStaff({ ...newStaff, ward: e.target.value })}
-                  required
-                >
-                  <option value="">Select POD…</option>
-                  {podOptions.map((p) => (
-                    <option key={p.id} value={p.name}>
-                      {p.name}
-                      {typeof p.occupied_beds === "number"
-                        ? ` — beds ${p.occupied_beds}/${p.bed_capacity}`
-                        : ` — capacity ${p.bed_capacity}`}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-            {error && <p className="text-sm text-red-600 sm:col-span-2">{error}</p>}
-            <div className="flex gap-2 sm:col-span-2">
-              <Button type="submit" disabled={createUser.isPending}>
-                {createUser.isPending ? "Registering…" : "Register User"}
-              </Button>
-              <Button type="button" variant="outline" onClick={() => setShowAddForm(false)}>
-                Cancel
-              </Button>
-            </div>
-          </form>
-        </Card>
-      )}
 
       <Card className="overflow-hidden">
         <div className="border-b border-border px-4 py-3">
@@ -258,7 +117,11 @@ export default function StaffManagePage() {
                 <tr>
                   <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
                     No staff yet.{" "}
-                    <button type="button" className="font-medium text-primary hover:underline" onClick={() => setShowAddForm(true)}>
+                    <button
+                      type="button"
+                      className="font-medium text-primary hover:underline"
+                      onClick={() => setShowRegister(true)}
+                    >
                       Add the first account
                     </button>
                   </td>
@@ -362,6 +225,7 @@ export default function StaffManagePage() {
         </div>
       </Card>
 
+      <StaffRegisterModal open={showRegister} onClose={() => setShowRegister(false)} />
       <StaffDetailModal user={viewUser} open={!!viewUser} onClose={() => setViewUser(null)} />
       <StaffEditModal user={editUser} open={!!editUser} onClose={() => setEditUser(null)} />
     </AppLayout>
