@@ -109,8 +109,8 @@ export function NurseDashboard() {
     <div className="space-y-4">
       <AssignedUnitBanner
         pods={assignedPods}
-        helper="Overview and My Patients are scoped to your assigned NICU pod only. Full multi-POD census is admin-only."
-        emptyHelper="No POD assigned. Ask an administrator to assign you to a NICU pod — you will not see patients until then."
+        helper="Your pod only."
+        emptyHelper="Ask admin for a POD."
         actions={nurseActions}
       />
 

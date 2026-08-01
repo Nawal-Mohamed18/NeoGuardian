@@ -21,8 +21,8 @@ type AssignedUnitBannerProps = {
 /** Single hero strip: assigned unit + primary actions (brand teal only). */
 export function AssignedUnitBanner({
   pods,
-  helper = "Patients and alerts include all assigned NICU pods (max 3).",
-  emptyHelper = "Ask your administrator to assign you to a NICU pod. Until then, no patient data is shown.",
+  helper = "Your pod only.",
+  emptyHelper = "Ask admin for a POD.",
   actions = [],
   className,
 }: AssignedUnitBannerProps) {
