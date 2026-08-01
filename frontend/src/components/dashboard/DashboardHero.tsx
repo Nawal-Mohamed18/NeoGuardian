@@ -12,7 +12,7 @@ function greeting() {
 
 export function DashboardHero({ displayName, roleLabel }: DashboardHeroProps) {
   return (
-    <section className="dashboard-hero relative overflow-hidden rounded-xl border border-teal-100/80 bg-linear-to-br from-white via-teal-50/40 to-cyan-50/60 px-4 py-4 shadow-sm sm:px-5">
+    <section className="dashboard-hero relative overflow-hidden rounded-xl border border-teal-200/70 bg-linear-to-br from-card via-teal-50/50 to-cyan-50/70 px-4 py-4 shadow-sm sm:px-5">
       <div className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full bg-teal-200/20 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-10 left-1/3 h-32 w-32 rounded-full bg-cyan-200/20 blur-3xl" />
 

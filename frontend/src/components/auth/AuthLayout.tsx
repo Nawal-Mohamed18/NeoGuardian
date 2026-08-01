@@ -6,9 +6,9 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="force-light min-h-screen bg-linear-to-br from-slate-100 via-slate-50 to-teal-50/50 p-4 lg:p-8 text-slate-900">
+    <div className="force-light min-h-screen bg-linear-to-br from-slate-200/80 via-slate-100 to-teal-50/60 p-4 lg:p-8 text-slate-900">
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl items-center">
-        <div className="grid w-full overflow-hidden rounded-3xl border border-white/70 bg-white shadow-2xl shadow-slate-300/40 lg:grid-cols-2">
+        <div className="grid w-full overflow-hidden rounded-3xl border border-border bg-card shadow-2xl shadow-slate-400/25 lg:grid-cols-2">
           <div className="relative hidden overflow-hidden lg:block">
             <img
               src="/auth-hero.png"

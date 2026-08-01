@@ -71,13 +71,13 @@ const PRIORITY_TAG: Record<Priority, string> = {
 
 function SkeletonPane() {
   return (
-    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-white dark:bg-slate-950 lg:rounded-2xl lg:border lg:border-slate-200 dark:border-slate-700 lg:shadow-sm">
-      <div className="border-b border-slate-200 dark:border-slate-700 p-4">
+    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-card lg:rounded-2xl lg:border lg:border-border lg:shadow-sm">
+      <div className="border-b border-border p-4">
         <div className="h-4 w-48 animate-pulse rounded bg-slate-200 dark:bg-slate-700" />
       </div>
       <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)]">
         {[0, 1].map((col) => (
-          <div key={col} className="min-h-0 space-y-3 border-slate-200 dark:border-slate-700 p-4 lg:border-r lg:last:border-r-0">
+          <div key={col} className="min-h-0 space-y-3 border-border p-4 lg:border-r lg:last:border-r-0">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="animate-pulse space-y-2 rounded-2xl bg-slate-50 dark:bg-slate-800/70 p-3">
                 <div className="h-3 w-2/3 rounded bg-slate-200 dark:bg-slate-700" />
@@ -173,7 +173,7 @@ function MessageCard({
               !isDeleted && isOwn && !isBroadcast && "rounded-br-md bg-[#14B8A6] text-white",
               !isDeleted && isOwn && isBroadcast && "rounded-br-md border border-amber-300 bg-amber-500 text-white",
               !isDeleted && !isOwn && isBroadcast && "rounded-bl-md border border-amber-200 bg-amber-50 text-slate-900 dark:border-amber-700/50 dark:bg-amber-950/45 dark:text-amber-50",
-              !isDeleted && !isOwn && !isBroadcast && "rounded-bl-md border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+              !isDeleted && !isOwn && !isBroadcast && "rounded-bl-md border border-border bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
             )}
           >
             <div className="mb-0.5 flex flex-wrap items-center gap-1">
@@ -261,7 +261,7 @@ function MessageCard({
           {!isDeleted && (
             <div
               className={cn(
-                "pointer-events-none absolute top-full z-10 mt-0.5 flex flex-wrap gap-0.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-1 py-0.5 opacity-0 shadow-sm transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100",
+                "pointer-events-none absolute top-full z-10 mt-0.5 flex flex-wrap gap-0.5 rounded-md border border-border bg-card px-1 py-0.5 opacity-0 shadow-sm transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100",
                 deleteOpen && "pointer-events-auto opacity-100",
                 isOwn ? "right-0" : "left-0"
               )}
@@ -378,7 +378,7 @@ export default function TeamChatPage() {
     [messages, username, staff]
   );
 
-  // Deep-link from TopNav “who texted you” → /chat?c=dm:user or broadcast
+  // Deep-link from TopNav â€œwho texted youâ€ â†’ /chat?c=dm:user or broadcast
   useEffect(() => {
     const c = searchParams.get("c");
     if (!c || !conversations.length) return;
@@ -697,26 +697,26 @@ export default function TeamChatPage() {
   return (
     <AppLayout immersive>
       <div
-        className="staff-chat relative flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 lg:rounded-2xl lg:border lg:border-slate-200 dark:border-slate-700 lg:shadow-sm"
+        className="staff-chat relative flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-card text-foreground lg:rounded-2xl lg:border lg:border-border lg:shadow-sm"
       >
-        {/* Title strip — single compact line + own photo */}
-        <header className="z-10 flex shrink-0 items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-1.5 sm:px-4">
+        {/* Title strip â€” single compact line + own photo */}
+        <header className="z-10 flex shrink-0 items-center justify-between gap-2 border-b border-border bg-card px-3 py-1.5 sm:px-4">
           <div className="flex min-w-0 items-center gap-2.5">
             <h1 className="truncate text-sm font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-base">
               Staff Communication
             </h1>
           </div>
           <div className="flex shrink-0 items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400">
-            <span className="hidden rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 px-2 py-0.5 md:inline">
+            <span className="hidden rounded-full border border-border bg-slate-50 dark:bg-slate-800/70 px-2 py-0.5 md:inline">
               {dateLabel}
             </span>
-            <span className="inline-flex max-w-[8rem] items-center gap-1 truncate rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 px-2 py-0.5">
+            <span className="inline-flex max-w-[8rem] items-center gap-1 truncate rounded-full border border-border bg-slate-50 dark:bg-slate-800/70 px-2 py-0.5">
               <Stethoscope className="h-3 w-3 shrink-0 text-[#14B8A6]" />
               <span className="truncate">{ward}</span>
             </span>
             <label
               className={cn(
-                "group relative flex cursor-pointer items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 py-0.5 pl-0.5 pr-2 transition hover:border-teal-200 hover:bg-teal-50/80 dark:hover:border-teal-700 dark:hover:bg-teal-950/40",
+                "group relative flex cursor-pointer items-center gap-1.5 rounded-full border border-border bg-slate-50 dark:bg-slate-800/70 py-0.5 pl-0.5 pr-2 transition hover:border-teal-200 hover:bg-teal-50/80 dark:hover:border-teal-700 dark:hover:bg-teal-950/40",
                 updateProfile.isPending && "pointer-events-none opacity-60"
               )}
               title="Change your profile photo"
@@ -734,7 +734,7 @@ export default function TeamChatPage() {
                 </span>
               </span>
               <span className="hidden text-[10px] font-semibold text-slate-900 dark:text-slate-100 sm:inline">
-                {updateProfile.isPending ? "Saving…" : "Your photo"}
+                {updateProfile.isPending ? "Savingâ€¦" : "Your photo"}
               </span>
               <input
                 type="file"
@@ -766,11 +766,11 @@ export default function TeamChatPage() {
           {/* Left: conversations */}
           <aside
             className={cn(
-              "flex min-h-0 flex-col border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 lg:border-r",
+              "flex min-h-0 flex-col border-border bg-card lg:border-r",
               mobilePane === "chat" ? "hidden lg:flex" : "flex"
             )}
           >
-            <div className="shrink-0 space-y-2 border-b border-slate-200 dark:border-slate-700 p-3">
+            <div className="shrink-0 space-y-2 border-b border-border p-3">
               <div className="relative">
                 <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                 <Input
@@ -856,7 +856,7 @@ export default function TeamChatPage() {
                           {conv.lastMessage
                             ? parseMessageBody(conv.lastMessage).text ||
                               (parseMessageBody(conv.lastMessage).images.length
-                                ? "📷 Photo"
+                                ? "ðŸ“· Photo"
                                 : "No messages yet")
                             : "No messages yet"}
                         </p>
@@ -875,14 +875,14 @@ export default function TeamChatPage() {
               mobilePane === "list" ? "hidden lg:flex" : "flex"
             )}
           >
-            <div className="z-10 flex shrink-0 items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 px-2 py-1.5 sm:px-3">
+            <div className="z-10 flex shrink-0 items-center justify-between gap-2 border-b border-border bg-card px-2 py-1.5 sm:px-3">
               <div className="min-w-0 flex-1">
                 <button
                   type="button"
                   className="mb-0.5 text-[11px] font-semibold text-[#14B8A6] lg:hidden"
                   onClick={() => setMobilePane("list")}
                 >
-                  ← Conversations
+                  â† Conversations
                 </button>
                 <div className="flex min-w-0 items-center gap-2">
                   {active && (
@@ -921,7 +921,7 @@ export default function TeamChatPage() {
                                 "direct"
                               )
                         : "Select a conversation"}
-                      {active?.patientCode ? ` · 🩺 ${active.patientCode}` : ""}
+                      {active?.patientCode ? ` Â· ðŸ©º ${active.patientCode}` : ""}
                     </p>
                   </div>
                 </div>
@@ -958,7 +958,7 @@ export default function TeamChatPage() {
                     </span>
                     {!pinsOpen && pinnedMessages[0] ? (
                       <>
-                        <span className="text-slate-400"> · </span>
+                        <span className="text-slate-400"> Â· </span>
                         <span className="font-medium">{pinnedMessages[0].sender_name}: </span>
                         {pinnedMessages[0].body}
                       </>
@@ -972,7 +972,7 @@ export default function TeamChatPage() {
                   />
                 </button>
                 {pinsOpen && (
-                  <div className="mt-1 max-h-40 space-y-1 overflow-y-auto rounded-xl border border-amber-200/80 bg-white/90 p-1.5 dark:border-amber-700/40 dark:bg-slate-900/90">
+                  <div className="mt-1 max-h-40 space-y-1 overflow-y-auto rounded-xl border border-amber-200/80 bg-card/90 p-1.5 dark:border-amber-700/40 dark:bg-slate-900/90">
                     {pinnedMessages.map((m) => (
                       <div
                         key={m.id}
@@ -1011,8 +1011,8 @@ export default function TeamChatPage() {
             >
               {!threadMessages.length ? (
                 <div className="flex min-h-[200px] flex-col items-center justify-center px-6 py-10 text-center">
-                  <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-2xl shadow-sm dark:bg-slate-800">
-                    💬
+                  <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-2xl shadow-sm">
+                    ðŸ’¬
                   </div>
                   <p className="text-base font-semibold text-slate-900 dark:text-slate-100">No messages yet.</p>
                   <p className="mt-1 max-w-sm text-sm text-slate-500 dark:text-slate-400">
@@ -1091,7 +1091,7 @@ export default function TeamChatPage() {
               <button
                 type="button"
                 onClick={() => scrollToBottom(true)}
-                className="absolute bottom-24 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white text-teal-500 shadow-md transition-transform duration-150 hover:scale-105 dark:bg-slate-800 dark:text-teal-400"
+                className="absolute bottom-24 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-card text-teal-600 shadow-md transition-transform duration-150 hover:scale-105 dark:text-teal-400"
                 aria-label="Scroll to latest"
               >
                 <ArrowDown className="h-4 w-4" />
@@ -1104,7 +1104,7 @@ export default function TeamChatPage() {
                 e.preventDefault();
                 void handleSend();
               }}
-              className="shrink-0 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 px-2 py-1 pb-[max(0.25rem,env(safe-area-inset-bottom))] sm:px-3"
+              className="shrink-0 border-t border-border bg-card px-2 py-1 pb-[max(0.25rem,env(safe-area-inset-bottom))] sm:px-3"
             >
               <div className="mb-1 flex gap-1 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 <div className="relative min-w-[6.5rem] flex-1" ref={recipientRef}>
@@ -1126,7 +1126,7 @@ export default function TeamChatPage() {
                     <ChevronDown className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
                   </button>
                   {recipientOpen && (
-                    <div className="absolute bottom-full left-0 z-30 mb-1 max-h-48 w-full min-w-[200px] overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white py-1 shadow-lg dark:bg-slate-900">
+                    <div className="absolute bottom-full left-0 z-30 mb-1 max-h-48 w-full min-w-[200px] overflow-y-auto rounded-xl border border-border bg-card py-1 shadow-lg">
                       <button
                         type="button"
                         className={cn(
@@ -1166,7 +1166,7 @@ export default function TeamChatPage() {
                           <span className="min-w-0 flex-1 truncate">
                             {s.profile?.full_name || s.username}
                             <span className="ml-1 text-xs font-normal text-slate-500 dark:text-slate-400">
-                              · {s.profile?.role ?? s.role}
+                              Â· {s.profile?.role ?? s.role}
                             </span>
                           </span>
                         </button>
@@ -1183,7 +1183,7 @@ export default function TeamChatPage() {
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as Priority)}
-                  className="h-7 shrink-0 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 px-1 text-[11px] font-semibold text-slate-900 dark:text-slate-100"
+                  className="h-7 shrink-0 rounded-md border border-border bg-slate-50 dark:bg-slate-800/70 px-1 text-[11px] font-semibold text-slate-900 dark:text-slate-100"
                   title="Priority tag"
                 >
                   <option value="routine">Routine</option>
@@ -1198,13 +1198,13 @@ export default function TeamChatPage() {
                       setRecipientOpen(false);
                       setEmojiOpen(false);
                     }}
-                    className="inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 px-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:border-teal-300 hover:text-slate-900 dark:hover:text-slate-100"
+                    className="inline-flex h-7 items-center gap-1 rounded-md border border-border bg-slate-50 dark:bg-slate-800/70 px-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:border-teal-300 hover:text-slate-900 dark:hover:text-slate-100"
                     title="Quick templates"
                   >
                     <MessageSquareText className="h-3.5 w-3.5" />
                   </button>
                   {templatesOpen && (
-                    <div className="absolute bottom-full right-0 z-30 mb-1 w-64 rounded-xl border border-slate-200 dark:border-slate-700 bg-white py-1 shadow-lg dark:bg-slate-900">
+                    <div className="absolute bottom-full right-0 z-30 mb-1 w-64 rounded-xl border border-border bg-card py-1 shadow-lg">
                       {QUICK_TEMPLATES.map((t) => (
                         <button
                           key={t}
@@ -1229,7 +1229,7 @@ export default function TeamChatPage() {
                   {pendingImages.map((img) => (
                     <div
                       key={img.id}
-                      className="relative h-10 w-10 overflow-hidden rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70"
+                      className="relative h-10 w-10 overflow-hidden rounded-md border border-border bg-slate-50 dark:bg-slate-800/70"
                     >
                       <img src={img.dataUrl} alt={img.name} className="h-full w-full object-cover" />
                       <button
@@ -1285,7 +1285,7 @@ export default function TeamChatPage() {
                     <Smile className="h-4 w-4" />
                   </button>
                   {emojiOpen && (
-                    <div className="absolute bottom-full left-0 z-40 mb-1 w-72 rounded-xl border border-slate-200 dark:border-slate-700 bg-white p-2 shadow-lg dark:bg-slate-900">
+                    <div className="absolute bottom-full left-0 z-40 mb-1 w-72 rounded-xl border border-border bg-card p-2 shadow-lg">
                       <div className="max-h-48 space-y-2 overflow-y-auto">
                         {EMOJI_GROUPS.map((group) => (
                           <div key={group.label}>
@@ -1313,7 +1313,7 @@ export default function TeamChatPage() {
                     </div>
                   )}
                 </div>
-                <div className="min-w-0 flex-1 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 focus-within:border-teal-300 focus-within:ring-1 focus-within:ring-teal-100 dark:focus-within:border-teal-600 dark:focus-within:ring-teal-900/50">
+                <div className="min-w-0 flex-1 rounded-2xl border border-border bg-slate-50 dark:bg-slate-800/70 focus-within:border-teal-300 focus-within:ring-1 focus-within:ring-teal-100 dark:focus-within:border-teal-600 dark:focus-within:ring-teal-900/50">
                   <textarea
                     ref={textareaRef}
                     value={body}
@@ -1363,7 +1363,7 @@ export default function TeamChatPage() {
                   size="icon"
                   className="mb-0.5 h-8 w-8 shrink-0 rounded-full bg-[#14B8A6] text-white shadow-sm hover:bg-teal-600"
                   aria-label="Send message"
-                  title="Enter to send · Shift+Enter for new line"
+                  title="Enter to send Â· Shift+Enter for new line"
                 >
                   {send.isPending ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />

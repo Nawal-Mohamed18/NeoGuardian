@@ -27,7 +27,7 @@ export function IconField({ id, label, icon: Icon, isPassword, className, ...pro
           {...props}
           type={type}
           className={cn(
-            "h-11 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-10 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20",
+            "h-11 w-full rounded-xl border border-input bg-muted/50 pl-10 pr-10 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-primary focus:bg-card focus:ring-2 focus:ring-primary/20",
             className
           )}
         />

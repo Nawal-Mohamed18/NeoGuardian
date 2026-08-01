@@ -5,22 +5,23 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-background: #f6f8fb;
+  /* Soft clinical light: avoid pure #fff glare; clear canvas → card hierarchy */
+  --color-background: #e8eef5;
   --color-foreground: #0f172a;
-  --color-card: #ffffff;
+  --color-card: #f7f9fc;
   --color-card-foreground: #0f172a;
   --color-primary: #0d9488;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #f1f5f9;
+  --color-secondary: #e2e8f0;
   --color-secondary-foreground: #334155;
-  --color-muted: #f1f5f9;
+  --color-muted: #e2e8f0;
   --color-muted-foreground: #64748b;
   --color-accent: #ecfeff;
   --color-accent-foreground: #0f766e;
   --color-destructive: #dc2626;
   --color-destructive-foreground: #ffffff;
-  --color-border: #e6ebf1;
-  --color-input: #e2e8f0;
+  --color-border: #cdd5e1;
+  --color-input: #c5cdd8;
   --color-ring: #0d9488;
 
   --color-sidebar: #0b1f3a;
@@ -156,22 +157,22 @@ html.dark .sidebar-nav-active-surface::after {
 /* Auth (and other) surfaces that must stay light even when app is in dark mode */
 .force-light {
   color-scheme: light;
-  --color-background: #f6f8fb;
+  --color-background: #e8eef5;
   --color-foreground: #0f172a;
-  --color-card: #ffffff;
+  --color-card: #f7f9fc;
   --color-card-foreground: #0f172a;
   --color-primary: #0d9488;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #f1f5f9;
+  --color-secondary: #e2e8f0;
   --color-secondary-foreground: #334155;
-  --color-muted: #f1f5f9;
+  --color-muted: #e2e8f0;
   --color-muted-foreground: #64748b;
   --color-accent: #ecfeff;
   --color-accent-foreground: #0f766e;
   --color-destructive: #dc2626;
   --color-destructive-foreground: #ffffff;
-  --color-border: #e6ebf1;
-  --color-input: #e2e8f0;
+  --color-border: #cdd5e1;
+  --color-input: #c5cdd8;
   --color-ring: #0d9488;
   color: var(--color-foreground);
 }
