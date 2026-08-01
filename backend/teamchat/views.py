@@ -9,6 +9,15 @@ from .models import TeamMessage, TeamMessageReceipt
 from .serializers import TeamMessageSerializer
 
 
+def _profile_pods(profile) -> list[str]:
+    if not profile:
+        return []
+    if hasattr(profile, "assigned_pod_names"):
+        return [str(p).strip() for p in profile.assigned_pod_names() if str(p).strip()]
+    ward = (getattr(profile, "ward", None) or "").strip()
+    return [ward] if ward else []
+
+
 def _mark_delivered_for_user(user, message_ids: list[int]) -> None:
     if not message_ids:
         return
@@ -64,26 +73,39 @@ class TeamMessageViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         profile = getattr(user, "profile", None)
-        qs = (
+        role = getattr(profile, "role", "") if profile else ""
+        pods = _profile_pods(profile)
+
+        base = (
             TeamMessage.objects
             .select_related(
                 "sender", "sender__profile", "recipient", "recipient__profile", "deleted_by"
             )
             .prefetch_related("hidden_for", "receipts")
             .filter(channel=TeamMessage.CHANNEL_NICU)
-            .filter(
-                Q(recipient__isnull=True)
-                | Q(recipient=user)
-                | Q(sender=user)
-            )
             .exclude(hidden_for=user)
         )
-        pod_filter = self.request.query_params.get("pod")
+
+        dm_q = Q(recipient=user) | Q(sender=user, recipient__isnull=False)
+        broadcast_q = Q(recipient__isnull=True)
+
+        pod_filter = (self.request.query_params.get("pod") or "").strip()
         if pod_filter:
-            qs = qs.filter(Q(pod_name__iexact=pod_filter) | Q(pod_name=""))
-        elif profile and profile.role != "admin" and profile.ward:
-            qs = qs.filter(Q(pod_name__iexact=profile.ward) | Q(pod_name="") | Q(sender=user) | Q(recipient=user))
-        return qs.order_by("created_at")
+            visible = dm_q | (
+                broadcast_q & (Q(pod_name__iexact=pod_filter) | Q(pod_name="") | Q(sender=user))
+            )
+        elif role == "admin":
+            visible = dm_q | broadcast_q
+        elif pods:
+            pod_match = Q(pod_name="")
+            for name in pods:
+                pod_match |= Q(pod_name__iexact=name)
+            visible = dm_q | (broadcast_q & (pod_match | Q(sender=user)))
+        else:
+            # No pod assignment: still see hospital-wide broadcasts and own messages.
+            visible = dm_q | (broadcast_q & (Q(pod_name="") | Q(sender=user)))
+
+        return base.filter(visible).order_by("created_at")
 
     def get_serializer_context(self):
         ctx = super().get_serializer_context()
@@ -125,7 +147,12 @@ class TeamMessageViewSet(viewsets.ModelViewSet):
                 return Response({"detail": "message_ids must be integers."}, status=400)
             qs = qs.filter(id__in=ids)
         elif conversation_id == "broadcast":
-            qs = qs.filter(recipient__isnull=True)
+            qs = qs.filter(recipient__isnull=True, pod_name="")
+        elif conversation_id.startswith("broadcast:"):
+            pod = conversation_id[len("broadcast:") :].strip()
+            if not pod:
+                return Response({"detail": "Invalid conversation_id."}, status=400)
+            qs = qs.filter(recipient__isnull=True, pod_name__iexact=pod)
         elif conversation_id.startswith("dm:"):
             peer = conversation_id[3:].strip()
             if not peer:

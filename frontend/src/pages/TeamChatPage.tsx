@@ -374,9 +374,24 @@ export default function TeamChatPage() {
   const prevLenRef = useRef(0);
   const knownIdsRef = useRef<Set<number>>(new Set());
 
+  const myPods = useMemo(() => {
+    const fromList = user?.profile?.wards;
+    if (Array.isArray(fromList) && fromList.length) {
+      return fromList.map((p) => String(p).trim()).filter(Boolean);
+    }
+    const primary = (user?.profile?.ward || "").trim();
+    return primary ? [primary] : [];
+  }, [user?.profile?.wards, user?.profile?.ward]);
+
+  const isAdmin = (user?.profile?.role || role) === "admin";
+
   const conversations = useMemo(
-    () => buildConversations(messages, username, staff),
-    [messages, username, staff]
+    () =>
+      buildConversations(messages, username, staff, {
+        myPods,
+        isAdmin,
+      }),
+    [messages, username, staff, myPods, isAdmin]
   );
 
   // Deep-link from TopNav "who texted you" -> /chat?c=dm:user or broadcast
@@ -484,6 +499,15 @@ export default function TeamChatPage() {
   useEffect(() => {
     if (!active && conversations[0]) setActiveId(conversations[0].id);
   }, [active, conversations]);
+
+  useEffect(() => {
+    // Initial "broadcast" id maps to All NICU; clinical users should open their pod thread.
+    if (activeId !== "broadcast" || isAdmin) return;
+    const preferred =
+      (myPods[0] && conversations.find((c) => c.id === `broadcast:${myPods[0]}`)) ||
+      conversations.find((c) => c.kind === "broadcast");
+    if (preferred && preferred.id !== activeId) setActiveId(preferred.id);
+  }, [conversations, activeId, isAdmin, myPods]);
 
   useEffect(() => {
     if (!username || !active) return;
@@ -598,6 +622,10 @@ export default function TeamChatPage() {
       body: fullBody,
       patient_code: patientCode.trim() || undefined,
       recipient_username: recipientUsername || null,
+      pod_name:
+        !recipientUsername && active?.kind === "broadcast"
+          ? active.podName || ""
+          : undefined,
     });
     setBody("");
     setPendingImages([]);
@@ -808,7 +836,14 @@ export default function TeamChatPage() {
                       type="button"
                       className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
                       onClick={() => {
-                        const broadcast = conversations.find((c) => c.id === "broadcast");
+                        const preferredId = isAdmin
+                          ? "broadcast"
+                          : myPods[0]
+                            ? `broadcast:${myPods[0]}`
+                            : "broadcast";
+                        const broadcast =
+                          conversations.find((c) => c.id === preferredId) ||
+                          conversations.find((c) => c.kind === "broadcast");
                         if (broadcast) selectConversation(broadcast);
                         setStartChatOpen(false);
                         setFilter("all");
@@ -818,13 +853,43 @@ export default function TeamChatPage() {
                       <Megaphone className="h-4 w-4 shrink-0 text-amber-500" />
                       <span className="min-w-0 flex-1">
                         <span className="block font-medium text-slate-900 dark:text-slate-100">
-                          Everyone (broadcast)
+                          {isAdmin ? "All NICU (broadcast)" : "Pod broadcast"}
                         </span>
                         <span className="block text-[11px] text-slate-500 dark:text-slate-400">
-                          Message the whole NICU team
+                          {isAdmin
+                            ? "Hospital-wide update"
+                            : myPods[0]
+                              ? `Send to ${myPods[0]}`
+                              : "Broadcast to your assigned pod"}
                         </span>
                       </span>
                     </button>
+                    {!isAdmin &&
+                      myPods.slice(1).map((pod) => (
+                        <button
+                          key={`start-broadcast-${pod}`}
+                          type="button"
+                          className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
+                          onClick={() => {
+                            const id = `broadcast:${pod}`;
+                            const conv = conversations.find((c) => c.id === id);
+                            if (conv) selectConversation(conv);
+                            setStartChatOpen(false);
+                            setFilter("all");
+                            setConvSearch("");
+                          }}
+                        >
+                          <Megaphone className="h-4 w-4 shrink-0 text-amber-500" />
+                          <span className="min-w-0 flex-1">
+                            <span className="block font-medium text-slate-900 dark:text-slate-100">
+                              {pod.replace(/^NICU\s+/i, "")} broadcast
+                            </span>
+                            <span className="block text-[11px] text-slate-500 dark:text-slate-400">
+                              Send to {pod}
+                            </span>
+                          </span>
+                        </button>
+                      ))}
                     {staff
                       .filter((s) => s.username !== username)
                       .map((s) => {
@@ -944,7 +1009,7 @@ export default function TeamChatPage() {
                       <div className="min-w-0 flex-1 overflow-hidden">
                         <div className="flex items-center justify-between gap-2">
                           <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
-                            {conv.kind === "broadcast" ? "Everyone" : conv.title}
+                            {conv.title}
                           </p>
                           <span className="shrink-0 text-[10px] text-slate-500 dark:text-slate-400">
                             {formatActivity(conv.lastAt)}
@@ -1015,7 +1080,7 @@ export default function TeamChatPage() {
                   <div className="min-w-0">
                     <div className="flex min-w-0 items-center gap-1.5">
                       <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">
-                        {active?.kind === "broadcast" ? "Everyone" : active?.title}
+                        {active?.title}
                       </p>
                       {active && (
                         <RoleBadge role={active.kind === "broadcast" ? "broadcast" : active.role} />
@@ -1127,7 +1192,7 @@ export default function TeamChatPage() {
                   </div>
                   <p className="text-base font-semibold text-slate-900 dark:text-slate-100">No messages yet.</p>
                   <p className="mt-1 max-w-sm text-sm text-slate-500 dark:text-slate-400">
-                    Start a conversation with your NICU team or send a broadcast update.
+                    Start a conversation with your NICU team or send a pod broadcast.
                   </p>
                 </div>
               ) : (

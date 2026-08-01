@@ -56,7 +56,10 @@ export function useTeamChatUnread(options?: { enabled?: boolean }) {
     if (!username) {
       return { total: 0, items: [] as ReturnType<typeof summarizeUnreadChat>["items"] };
     }
-    const conversations = buildConversations(messages, username, staff);
+    const conversations = buildConversations(messages, username, staff, {
+      myPods: user?.profile?.wards || (user?.profile?.ward ? [user.profile.ward] : []),
+      isAdmin: (user?.profile?.role || user?.role) === "admin",
+    });
     const readMap = loadReadMap(username);
     return summarizeUnreadChat(conversations, username, readMap);
   }, [messages, staff, username]);

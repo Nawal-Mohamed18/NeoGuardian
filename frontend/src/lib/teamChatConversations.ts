@@ -26,10 +26,24 @@ const DRAFT_KEY = (user: string, convId: string) => `teamchat-draft:${user}:${co
 const PIN_KEY = (user: string) => `teamchat-pins:${user}`;
 
 export function conversationIdForMessage(msg: TeamMessage, myUsername: string): string {
-  if (msg.is_broadcast) return "broadcast";
+  if (msg.is_broadcast) {
+    const pod = (msg.pod_name || "").trim();
+    return pod ? `broadcast:${pod}` : "broadcast";
+  }
   const other =
     msg.sender_username === myUsername ? msg.recipient_username || "unknown" : msg.sender_username;
   return `dm:${other}`;
+}
+
+export function broadcastConversationId(podName: string): string {
+  const pod = podName.trim();
+  return pod ? `broadcast:${pod}` : "broadcast";
+}
+
+function shortPodLabel(podName: string): string {
+  const name = podName.trim();
+  if (!name) return "All NICU";
+  return name.replace(/^NICU\s+/i, "") || name;
 }
 
 function roleLabel(role: string) {
@@ -39,32 +53,56 @@ function roleLabel(role: string) {
   return role || "Staff";
 }
 
+function ensureBroadcastThread(
+  map: Map<string, Conversation>,
+  podName: string,
+  opts?: { title?: string; subtitle?: string }
+) {
+  const id = broadcastConversationId(podName);
+  if (map.has(id)) return;
+  const isAll = !podName.trim();
+  map.set(id, {
+    id,
+    kind: "broadcast",
+    peerUsername: null,
+    title: opts?.title || (isAll ? "All NICU" : `${shortPodLabel(podName)} broadcast`),
+    role: "broadcast",
+    subtitle: opts?.subtitle || (isAll ? "Hospital-wide broadcast" : "Pod broadcast"),
+    lastMessage: "",
+    lastAt: null,
+    messageCount: 0,
+    patientCode: "",
+    podName: podName.trim(),
+    messages: [],
+  });
+}
+
 export function buildConversations(
   messages: TeamMessage[],
   myUsername: string,
-  staff: AuthUser[]
+  staff: AuthUser[],
+  options?: { myPods?: string[]; isAdmin?: boolean }
 ): Conversation[] {
   const map = new Map<string, Conversation>();
+  const myPods = (options?.myPods || []).map((p) => p.trim()).filter(Boolean);
+  const isAdmin = Boolean(options?.isAdmin);
 
-  const ensureBroadcast = () => {
-    if (!map.has("broadcast")) {
-      map.set("broadcast", {
-        id: "broadcast",
-        kind: "broadcast",
-        peerUsername: null,
-        title: "Everyone",
-        role: "broadcast",
-        subtitle: "Broadcast",
-        lastMessage: "",
-        lastAt: null,
-        messageCount: 0,
-        patientCode: "",
-        podName: "",
-        messages: [],
-      });
-    }
-  };
-  ensureBroadcast();
+  if (isAdmin) {
+    ensureBroadcastThread(map, "", {
+      title: "All NICU",
+      subtitle: "Hospital-wide broadcast",
+    });
+  }
+  for (const pod of myPods) {
+    ensureBroadcastThread(map, pod);
+  }
+  // Fallback so users with no pods still have a place to land.
+  if (!isAdmin && myPods.length === 0) {
+    ensureBroadcastThread(map, "", {
+      title: "All NICU",
+      subtitle: "Hospital-wide broadcast",
+    });
+  }
 
   for (const s of staff) {
     if (s.username === myUsername) continue;
@@ -82,7 +120,7 @@ export function buildConversations(
         lastAt: null,
         messageCount: 0,
         patientCode: "",
-        podName: s.profile?.ward || "",
+        podName: s.profile?.ward || s.profile?.wards?.[0] || "",
         messages: [],
       });
     }
@@ -92,9 +130,9 @@ export function buildConversations(
     const id = conversationIdForMessage(msg, myUsername);
     let conv = map.get(id);
     if (!conv) {
-      if (id === "broadcast") {
-        ensureBroadcast();
-        conv = map.get("broadcast")!;
+      if (msg.is_broadcast) {
+        ensureBroadcastThread(map, msg.pod_name || "");
+        conv = map.get(id)!;
       } else {
         const peer =
           msg.sender_username === myUsername ? msg.recipient_username || "" : msg.sender_username;
@@ -134,7 +172,9 @@ export function buildConversations(
       conv.lastMessage = last.body;
       conv.lastAt = last.created_at;
       conv.patientCode = last.patient_code || conv.patientCode;
-      conv.podName = last.pod_name || conv.podName;
+      if (conv.kind === "direct") {
+        conv.podName = last.pod_name || conv.podName;
+      }
       if (conv.kind === "direct" && !conv.role) {
         const peerMsg = [...conv.messages]
           .reverse()
@@ -149,8 +189,13 @@ export function buildConversations(
   }
 
   return Array.from(map.values()).sort((a, b) => {
-    if (a.id === "broadcast") return -1;
-    if (b.id === "broadcast") return 1;
+    if (a.kind === "broadcast" && b.kind !== "broadcast") return -1;
+    if (b.kind === "broadcast" && a.kind !== "broadcast") return 1;
+    if (a.kind === "broadcast" && b.kind === "broadcast") {
+      if (a.id === "broadcast") return -1;
+      if (b.id === "broadcast") return 1;
+      return a.title.localeCompare(b.title);
+    }
     const ta = a.lastAt ? new Date(a.lastAt).getTime() : 0;
     const tb = b.lastAt ? new Date(b.lastAt).getTime() : 0;
     return tb - ta;
@@ -172,6 +217,7 @@ export function filterConversations(
       c.subtitle.toLowerCase().includes(q) ||
       c.lastMessage.toLowerCase().includes(q) ||
       c.patientCode.toLowerCase().includes(q) ||
+      c.podName.toLowerCase().includes(q) ||
       (c.peerUsername || "").toLowerCase().includes(q)
     );
   });

@@ -118,8 +118,38 @@ class TeamMessageSerializer(serializers.ModelSerializer):
                 recipient = User.objects.get(username=recipient_username)
             except User.DoesNotExist:
                 raise serializers.ValidationError({"recipient_username": "User not found."})
+
         profile = getattr(request.user, "profile", None)
-        pod_name = validated_data.get("pod_name") or (profile.ward if profile else "") or ""
+        role = getattr(profile, "role", "") if profile else ""
+        pods = []
+        if profile and hasattr(profile, "assigned_pod_names"):
+            pods = [str(p).strip() for p in profile.assigned_pod_names() if str(p).strip()]
+        elif profile and (profile.ward or "").strip():
+            pods = [profile.ward.strip()]
+
+        requested_pod = (self.initial_data.get("pod_name") or validated_data.get("pod_name") or "").strip()
+
+        if recipient is not None:
+            # Direct messages keep optional pod tag from sender context.
+            pod_name = requested_pod or ((profile.ward if profile else "") or "")
+        else:
+            # Broadcast: pod-scoped for clinical staff; admin may send hospital-wide (empty).
+            if role == "admin":
+                pod_name = requested_pod
+            else:
+                if not pods:
+                    raise serializers.ValidationError(
+                        {"pod_name": "Assign a pod before sending a broadcast."}
+                    )
+                if requested_pod:
+                    if not any(requested_pod.lower() == p.lower() for p in pods):
+                        raise serializers.ValidationError(
+                            {"pod_name": "You can only broadcast to your assigned pods."}
+                        )
+                    pod_name = next(p for p in pods if p.lower() == requested_pod.lower())
+                else:
+                    pod_name = pods[0]
+
         return TeamMessage.objects.create(
             sender=request.user,
             recipient=recipient,
