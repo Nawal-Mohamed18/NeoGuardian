@@ -1,0 +1,8 @@
+# Use after setting this service Root Directory to /backend
+[build]
+builder = "RAILPACK"
+
+[deploy]
+startCommand = "python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5

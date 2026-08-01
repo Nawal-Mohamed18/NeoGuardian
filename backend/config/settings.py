@@ -25,9 +25,22 @@ SECRET_KEY = os.getenv(
 
 DEBUG = os.getenv("DEBUG", "true").lower() == "true"
 
-ALLOWED_HOSTS = [
-    h for h in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,testserver").split(",") if h
-]
+_raw_hosts = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,testserver").strip()
+if _raw_hosts == "*":
+    ALLOWED_HOSTS = ["*"]
+else:
+    ALLOWED_HOSTS = [h.strip() for h in _raw_hosts.split(",") if h.strip()]
+# Railway injects the public hostname for this service.
+_railway_host = (os.getenv("RAILWAY_PUBLIC_DOMAIN") or "").strip()
+if _railway_host and _railway_host not in ALLOWED_HOSTS and ALLOWED_HOSTS != ["*"]:
+    ALLOWED_HOSTS.append(_railway_host)
+
+_csrf = os.getenv("CSRF_TRUSTED_ORIGINS", "").strip()
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in _csrf.split(",") if o.strip()]
+if _railway_host:
+    origin = f"https://{_railway_host}"
+    if origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(origin)
 
 INSTALLED_APPS = [
     "django.contrib.admin",

@@ -1,0 +1,11 @@
+# Root Directory on Railway must be /frontend
+# Variables (set before build):
+#   VITE_API_URL=https://YOUR-BACKEND-SERVICE.up.railway.app/api/
+[build]
+builder = "RAILPACK"
+buildCommand = "npm ci && npm run build"
+
+[deploy]
+startCommand = "npm run start"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5
