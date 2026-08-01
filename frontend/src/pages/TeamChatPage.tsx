@@ -348,7 +348,6 @@ export default function TeamChatPage() {
   const [body, setBody] = useState("");
   const [patientCode, setPatientCode] = useState("");
   const [recipientUsername, setRecipientUsername] = useState("");
-  const [recipientOpen, setRecipientOpen] = useState(false);
   const [priority, setPriority] = useState<Priority>("routine");
   const [toast, setToast] = useState("");
   const [newBanner, setNewBanner] = useState(0);
@@ -366,7 +365,6 @@ export default function TeamChatPage() {
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const threadRef = useRef<HTMLDivElement>(null);
-  const recipientRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const emojiRef = useRef<HTMLDivElement>(null);
@@ -533,9 +531,6 @@ export default function TeamChatPage() {
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
       const t = e.target as Node;
-      if (recipientRef.current && !recipientRef.current.contains(t)) {
-        setRecipientOpen(false);
-      }
       if (emojiRef.current && !emojiRef.current.contains(t)) {
         setEmojiOpen(false);
       }
@@ -1107,73 +1102,6 @@ export default function TeamChatPage() {
               className="shrink-0 border-t border-border bg-card px-2 py-1 pb-[max(0.25rem,env(safe-area-inset-bottom))] sm:px-3"
             >
               <div className="mb-1 flex gap-1 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                <div className="relative min-w-[6.5rem] flex-1" ref={recipientRef}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setRecipientOpen((o) => !o);
-                      setTemplatesOpen(false);
-                      setEmojiOpen(false);
-                    }}
-                    className="flex h-7 w-full items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-2 text-left text-[11px] text-slate-900 hover:border-teal-300 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-100 dark:hover:border-teal-600"
-                  >
-                    <span className="truncate">
-                      {recipientUsername
-                        ? staff.find((s) => s.username === recipientUsername)?.profile?.full_name ||
-                          recipientUsername
-                        : "Everyone"}
-                    </span>
-                    <ChevronDown className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
-                  </button>
-                  {recipientOpen && (
-                    <div className="absolute bottom-full left-0 z-30 mb-1 max-h-48 w-full min-w-[200px] overflow-y-auto rounded-xl border border-border bg-card py-1 shadow-lg">
-                      <button
-                        type="button"
-                        className={cn(
-                          "block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800",
-                          !recipientUsername && "bg-teal-50 font-medium dark:bg-teal-950/50"
-                        )}
-                        onClick={() => {
-                          setRecipientUsername("");
-                          setActiveId("broadcast");
-                          setRecipientOpen(false);
-                        }}
-                      >
-                        <Megaphone className="mr-1.5 inline h-3.5 w-3.5 text-amber-500" />
-                        Everyone (broadcast)
-                      </button>
-                      {staff.map((s) => (
-                        <button
-                          key={s.id}
-                          type="button"
-                          className={cn(
-                            "flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800",
-                            recipientUsername === s.username && "bg-teal-50 font-medium dark:bg-teal-950/50"
-                          )}
-                          onClick={() => {
-                            setRecipientUsername(s.username);
-                            setActiveId(`dm:${s.username}`);
-                            setRecipientOpen(false);
-                          }}
-                        >
-                          <AvatarCircle
-                            name={s.profile?.full_name || s.username}
-                            role={s.profile?.role ?? s.role}
-                            src={avatarByUsername[s.username]}
-                            size="sm"
-                            online={Boolean(s.is_online)}
-                          />
-                          <span className="min-w-0 flex-1 truncate">
-                            {s.profile?.full_name || s.username}
-                            <span className="ml-1 text-xs font-normal text-slate-500 dark:text-slate-400">
-                              Â· {s.profile?.role ?? s.role}
-                            </span>
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
                 <Input
                   value={patientCode}
                   onChange={(e) => setPatientCode(e.target.value)}
@@ -1195,7 +1123,6 @@ export default function TeamChatPage() {
                     type="button"
                     onClick={() => {
                       setTemplatesOpen((o) => !o);
-                      setRecipientOpen(false);
                       setEmojiOpen(false);
                     }}
                     className="inline-flex h-7 items-center gap-1 rounded-md border border-border bg-slate-50 dark:bg-slate-800/70 px-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:border-teal-300 hover:text-slate-900 dark:hover:text-slate-100"
@@ -1276,7 +1203,6 @@ export default function TeamChatPage() {
                     onClick={() => {
                       setEmojiOpen((o) => !o);
                       setTemplatesOpen(false);
-                      setRecipientOpen(false);
                     }}
                     className="rounded-md p-1.5 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-teal-600 dark:hover:text-teal-400"
                     title="Insert emoji"
