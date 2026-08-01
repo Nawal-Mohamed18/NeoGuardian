@@ -789,24 +789,24 @@ export default function TeamChatPage() {
                     setTemplatesOpen(false);
                     setEmojiOpen(false);
                   }}
-                  className="flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-teal-200 bg-teal-50/80 px-2.5 text-left text-xs font-semibold text-teal-800 transition hover:border-teal-300 hover:bg-teal-50 dark:border-teal-800 dark:bg-teal-950/40 dark:text-teal-200 dark:hover:border-teal-700"
+                  className="flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-border bg-muted/70 px-2.5 text-left text-xs font-semibold text-foreground transition hover:border-teal-500/50 hover:bg-muted dark:border-slate-600 dark:bg-slate-800/90 dark:text-slate-100 dark:hover:border-teal-500/60 dark:hover:bg-slate-800"
                 >
                   <span className="inline-flex min-w-0 items-center gap-1.5">
-                    <UserPlus className="h-3.5 w-3.5 shrink-0" />
+                    <UserPlus className="h-3.5 w-3.5 shrink-0 text-teal-600 dark:text-teal-400" />
                     <span className="truncate">Message someone</span>
                   </span>
                   <ChevronDown
                     className={cn(
-                      "h-3.5 w-3.5 shrink-0 transition-transform",
+                      "h-3.5 w-3.5 shrink-0 text-slate-500 transition-transform dark:text-slate-400",
                       startChatOpen && "rotate-180"
                     )}
                   />
                 </button>
                 {startChatOpen && (
-                  <div className="absolute left-0 right-0 top-full z-40 mt-1 max-h-64 overflow-y-auto rounded-xl border border-border bg-card py-1 shadow-lg">
+                  <div className="absolute left-0 right-0 top-full z-40 mt-1 max-h-[min(22rem,55vh)] overflow-y-auto rounded-xl border border-border bg-card py-1 shadow-lg dark:border-slate-600 dark:bg-slate-900">
                     <button
                       type="button"
-                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
+                      className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
                       onClick={() => {
                         const broadcast = conversations.find((c) => c.id === "broadcast");
                         if (broadcast) selectConversation(broadcast);
@@ -834,7 +834,7 @@ export default function TeamChatPage() {
                           <button
                             key={s.id}
                             type="button"
-                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
+                            className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
                             onClick={() => {
                               const id = `dm:${s.username}`;
                               const conv =
