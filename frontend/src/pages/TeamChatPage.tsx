@@ -16,6 +16,7 @@ import {
   Check,
   CheckCheck,
   Pin,
+  UserPlus,
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -354,6 +355,7 @@ export default function TeamChatPage() {
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
+  const [startChatOpen, setStartChatOpen] = useState(false);
   const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
   const [attaching, setAttaching] = useState(false);
   const [readMap, setReadMap] = useState<Record<string, string>>(() =>
@@ -368,6 +370,7 @@ export default function TeamChatPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const emojiRef = useRef<HTMLDivElement>(null);
+  const startChatRef = useRef<HTMLDivElement>(null);
   const prevLenRef = useRef(0);
   const knownIdsRef = useRef<Set<number>>(new Set());
 
@@ -533,6 +536,9 @@ export default function TeamChatPage() {
       const t = e.target as Node;
       if (emojiRef.current && !emojiRef.current.contains(t)) {
         setEmojiOpen(false);
+      }
+      if (startChatRef.current && !startChatRef.current.contains(t)) {
+        setStartChatOpen(false);
       }
     }
     document.addEventListener("mousedown", onDocClick);
@@ -771,9 +777,114 @@ export default function TeamChatPage() {
                 <Input
                   value={convSearch}
                   onChange={(e) => setConvSearch(e.target.value)}
-                  placeholder="Search conversations..."
+                  placeholder="Search people or chats..."
                   className="h-9 border-slate-200 bg-slate-50 pl-8 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-100"
                 />
+              </div>
+              <div className="relative" ref={startChatRef}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStartChatOpen((o) => !o);
+                    setTemplatesOpen(false);
+                    setEmojiOpen(false);
+                  }}
+                  className="flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-teal-200 bg-teal-50/80 px-2.5 text-left text-xs font-semibold text-teal-800 transition hover:border-teal-300 hover:bg-teal-50 dark:border-teal-800 dark:bg-teal-950/40 dark:text-teal-200 dark:hover:border-teal-700"
+                >
+                  <span className="inline-flex min-w-0 items-center gap-1.5">
+                    <UserPlus className="h-3.5 w-3.5 shrink-0" />
+                    <span className="truncate">Message someone</span>
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "h-3.5 w-3.5 shrink-0 transition-transform",
+                      startChatOpen && "rotate-180"
+                    )}
+                  />
+                </button>
+                {startChatOpen && (
+                  <div className="absolute left-0 right-0 top-full z-40 mt-1 max-h-64 overflow-y-auto rounded-xl border border-border bg-card py-1 shadow-lg">
+                    <button
+                      type="button"
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
+                      onClick={() => {
+                        const broadcast = conversations.find((c) => c.id === "broadcast");
+                        if (broadcast) selectConversation(broadcast);
+                        setStartChatOpen(false);
+                        setFilter("all");
+                        setConvSearch("");
+                      }}
+                    >
+                      <Megaphone className="h-4 w-4 shrink-0 text-amber-500" />
+                      <span className="min-w-0 flex-1">
+                        <span className="block font-medium text-slate-900 dark:text-slate-100">
+                          Everyone (broadcast)
+                        </span>
+                        <span className="block text-[11px] text-slate-500 dark:text-slate-400">
+                          Message the whole NICU team
+                        </span>
+                      </span>
+                    </button>
+                    {staff
+                      .filter((s) => s.username !== username)
+                      .map((s) => {
+                        const role = s.profile?.role ?? s.role ?? "";
+                        const pod = s.profile?.ward || "";
+                        return (
+                          <button
+                            key={s.id}
+                            type="button"
+                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
+                            onClick={() => {
+                              const id = `dm:${s.username}`;
+                              const conv =
+                                conversations.find((c) => c.id === id) ||
+                                ({
+                                  id,
+                                  kind: "direct" as const,
+                                  peerUsername: s.username,
+                                  title: s.profile?.full_name || s.username,
+                                  role,
+                                  subtitle: role,
+                                  lastMessage: "",
+                                  lastAt: null,
+                                  messageCount: 0,
+                                  patientCode: "",
+                                  podName: pod,
+                                  messages: [],
+                                } satisfies Conversation);
+                              selectConversation(conv);
+                              setStartChatOpen(false);
+                              setFilter("all");
+                              setConvSearch("");
+                            }}
+                          >
+                            <AvatarCircle
+                              name={s.profile?.full_name || s.username}
+                              role={role}
+                              src={avatarByUsername[s.username]}
+                              size="sm"
+                              online={Boolean(s.is_online)}
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate font-medium text-slate-900 dark:text-slate-100">
+                                {s.profile?.full_name || s.username}
+                              </span>
+                              <span className="block truncate text-[11px] text-slate-500 dark:text-slate-400">
+                                {role}
+                                {pod ? ` · ${pod}` : ""}
+                              </span>
+                            </span>
+                          </button>
+                        );
+                      })}
+                    {staff.filter((s) => s.username !== username).length === 0 && (
+                      <p className="px-3 py-4 text-center text-xs text-slate-500 dark:text-slate-400">
+                        No other staff found yet.
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="flex gap-1">
                 {(
