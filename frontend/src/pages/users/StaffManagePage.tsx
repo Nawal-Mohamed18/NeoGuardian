@@ -97,8 +97,12 @@ export default function StaffManagePage() {
       </div>
 
       <Card className="overflow-hidden">
-        <div className="border-b border-border px-4 py-3">
+        <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
           <h3 className="font-semibold">All clinical staff</h3>
+          <Button type="button" size="sm" className="shrink-0" onClick={() => setShowRegister(true)}>
+            <Plus className="h-4 w-4" />
+            Add Staff
+          </Button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] text-sm">
@@ -137,7 +141,12 @@ export default function StaffManagePage() {
                   return (
                     <tr key={user.id} className="border-b border-border/70 hover:bg-muted/20">
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          className="flex w-full items-center gap-3 text-left"
+                          onClick={() => setViewUser(user)}
+                          aria-label={`View ${fullName}`}
+                        >
                           <StaffAvatar
                             name={fullName}
                             username={user.username}
@@ -151,7 +160,7 @@ export default function StaffManagePage() {
                             <p className="text-xs text-muted-foreground">@{user.username}</p>
                             <p className="text-xs text-muted-foreground">{user.email}</p>
                           </div>
-                        </div>
+                        </button>
                       </td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${ROLE_BADGE_CLASS[role] ?? ""}`}>
