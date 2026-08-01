@@ -376,7 +376,7 @@ export default function TeamChatPage() {
     [messages, username, staff]
   );
 
-  // Deep-link from TopNav â€œwho texted youâ€ â†’ /chat?c=dm:user or broadcast
+  // Deep-link from TopNav "who texted you" -> /chat?c=dm:user or broadcast
   useEffect(() => {
     const c = searchParams.get("c");
     if (!c || !conversations.length) return;
@@ -694,7 +694,7 @@ export default function TeamChatPage() {
       <div
         className="staff-chat relative flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-card text-foreground lg:rounded-2xl lg:border lg:border-border lg:shadow-sm"
       >
-        {/* Title strip â€” single compact line + own photo */}
+        {/* Title strip - single compact line + own photo */}
         <header className="z-10 flex shrink-0 items-center justify-between gap-2 border-b border-border bg-card px-3 py-1.5 sm:px-4">
           <div className="flex min-w-0 items-center gap-2.5">
             <h1 className="truncate text-sm font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-base">
@@ -729,7 +729,7 @@ export default function TeamChatPage() {
                 </span>
               </span>
               <span className="hidden text-[10px] font-semibold text-slate-900 dark:text-slate-100 sm:inline">
-                {updateProfile.isPending ? "Savingâ€¦" : "Your photo"}
+                {updateProfile.isPending ? "Saving..." : "Your photo"}
               </span>
               <input
                 type="file"
@@ -851,7 +851,7 @@ export default function TeamChatPage() {
                           {conv.lastMessage
                             ? parseMessageBody(conv.lastMessage).text ||
                               (parseMessageBody(conv.lastMessage).images.length
-                                ? "ðŸ“· Photo"
+                                ? "Photo"
                                 : "No messages yet")
                             : "No messages yet"}
                         </p>
@@ -877,7 +877,7 @@ export default function TeamChatPage() {
                   className="mb-0.5 text-[11px] font-semibold text-[#14B8A6] lg:hidden"
                   onClick={() => setMobilePane("list")}
                 >
-                  â† Conversations
+                  {"\u2190"} Conversations
                 </button>
                 <div className="flex min-w-0 items-center gap-2">
                   {active && (
@@ -916,7 +916,7 @@ export default function TeamChatPage() {
                                 "direct"
                               )
                         : "Select a conversation"}
-                      {active?.patientCode ? ` Â· ðŸ©º ${active.patientCode}` : ""}
+                      {active?.patientCode ? ` \u00b7 ${active.patientCode}` : ""}
                     </p>
                   </div>
                 </div>
@@ -953,7 +953,7 @@ export default function TeamChatPage() {
                     </span>
                     {!pinsOpen && pinnedMessages[0] ? (
                       <>
-                        <span className="text-slate-400"> Â· </span>
+                        <span className="text-slate-400">{" \u00b7 "}</span>
                         <span className="font-medium">{pinnedMessages[0].sender_name}: </span>
                         {pinnedMessages[0].body}
                       </>
@@ -1006,8 +1006,8 @@ export default function TeamChatPage() {
             >
               {!threadMessages.length ? (
                 <div className="flex min-h-[200px] flex-col items-center justify-center px-6 py-10 text-center">
-                  <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-2xl shadow-sm">
-                    ðŸ’¬
+                  <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-[#14B8A6] shadow-sm">
+                    <MessageSquareText className="h-7 w-7" />
                   </div>
                   <p className="text-base font-semibold text-slate-900 dark:text-slate-100">No messages yet.</p>
                   <p className="mt-1 max-w-sm text-sm text-slate-500 dark:text-slate-400">
@@ -1289,7 +1289,7 @@ export default function TeamChatPage() {
                   size="icon"
                   className="mb-0.5 h-8 w-8 shrink-0 rounded-full bg-[#14B8A6] text-white shadow-sm hover:bg-teal-600"
                   aria-label="Send message"
-                  title="Enter to send Â· Shift+Enter for new line"
+                  title={"Enter to send \u00b7 Shift+Enter for new line"}
                 >
                   {send.isPending ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
