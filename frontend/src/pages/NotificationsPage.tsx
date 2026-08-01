@@ -90,7 +90,7 @@ function FilterDropdown<T extends string>({
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="min-w-0 w-full sm:min-w-36 justify-between gap-2 border-border bg-card font-medium"
+          className="min-w-36 w-auto justify-between gap-2 border-border bg-card font-medium"
         >
           <span className="flex min-w-0 items-center gap-2 truncate">
             <span className="shrink-0 text-muted-foreground">{label}</span>
@@ -223,7 +223,7 @@ export default function NotificationsPage() {
       <PageHeader
         title="Clinical Alerts"
         action={
-          <div className="grid w-full max-w-md grid-cols-1 gap-2 sm:max-w-none sm:flex sm:w-auto sm:flex-wrap sm:items-center sm:justify-end">
+          <div className="flex w-full flex-row flex-wrap items-center justify-end gap-2 sm:w-auto">
             <FilterDropdown
               label="Status"
               value={statusFilter}
