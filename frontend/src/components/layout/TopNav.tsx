@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Bell } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Bell, LogOut } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { ChatNavButton } from "@/components/layout/ChatNavButton";
 import { useAuth } from "@/context/AuthContext";
@@ -27,13 +27,19 @@ function useNow(tickMs = 60_000) {
  */
 export function TopNav({ alertCount }: TopNavProps) {
   const dateLabel = useNow();
-  const { roleConfig, displayName, canAccess, authed } = useAuth();
+  const navigate = useNavigate();
+  const { roleConfig, displayName, canAccess, authed, signOut } = useAuth();
   const location = useLocation();
   const chatActive = location.pathname.startsWith("/chat");
   const { data: alerts = [] } = useAlerts({ enabled: authed });
   const liveCount = alerts.filter((a) => !a.acknowledged).length;
   const unread = alertCount ?? liveCount;
   const [scrolled, setScrolled] = useState(false);
+
+  function handleSignOut() {
+    signOut();
+    navigate("/login", { replace: true });
+  }
 
   useEffect(() => {
     const onScroll = () => {
@@ -83,6 +89,17 @@ export function TopNav({ alertCount }: TopNavProps) {
               </span>
             )}
           </Link>
+
+          {/* Sidebar is desktop-only — keep Sign out reachable on phones. */}
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:text-foreground lg:hidden"
+            aria-label="Sign out"
+            title="Sign out"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </header>

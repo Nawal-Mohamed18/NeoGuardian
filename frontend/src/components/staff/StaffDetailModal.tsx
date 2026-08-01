@@ -76,13 +76,14 @@ export function StaffDetailModal({ user, open, onClose }: StaffDetailModalProps)
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-3 top-3 z-10 rounded-md p-1.5 text-muted-foreground transition-all hover:bg-muted hover:rotate-90"
+          className="absolute right-3 top-3 z-10 rounded-md p-1.5 text-slate-600 transition-all hover:bg-black/5 hover:rotate-90 dark:text-slate-200 dark:hover:bg-white/10"
           aria-label="Close"
         >
           <X className="h-4 w-4" />
         </button>
 
-        <header className="bg-linear-to-br from-teal-50 to-cyan-50 px-5 py-6">
+        {/* Explicit light/dark header colors — avoid theme tokens that invert on a pale gradient. */}
+        <header className="bg-linear-to-br from-teal-50 to-cyan-50 px-5 py-6 dark:from-teal-950 dark:to-slate-900">
           <div className="flex items-center gap-3">
             <StaffAvatar
               name={fullName}
@@ -90,12 +91,12 @@ export function StaffDetailModal({ user, open, onClose }: StaffDetailModalProps)
               role={role}
               avatarData={user.profile?.preferences?.avatar_data}
               size="lg"
-              className="border-teal-200"
+              className="border-teal-200 dark:border-teal-700"
               fallbackClassName="bg-teal-600 text-white"
             />
             <div>
-              <h2 className="text-xl font-bold text-foreground">{fullName}</h2>
-              <p className="text-sm text-muted-foreground">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">{fullName}</h2>
+              <p className="text-sm text-slate-600 dark:text-slate-300">
                 {ROLE_TITLE[role] ?? role}
                 {user.profile?.wards?.length
                   ? ` · ${user.profile.wards.join(", ")}`
