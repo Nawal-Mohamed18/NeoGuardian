@@ -67,7 +67,13 @@ export function MobileNav() {
                   )}
                 </span>
                 <span className="truncate">
-                  {item.href === "/chat" ? "Chat" : item.label.split(" ")[0]}
+                  {item.href === "/chat"
+                    ? "Chat"
+                    : item.href === "/pods"
+                      ? "PODs"
+                      : item.href === "/users"
+                        ? "Staff"
+                        : item.label.split(" ")[0]}
                 </span>
               </Link>
             </li>
