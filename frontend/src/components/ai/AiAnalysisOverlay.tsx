@@ -15,7 +15,7 @@ export const AI_ANALYSIS_STEPS = [
 
 const STEP_MS = 950;
 /** Keep overlay visible long enough to feel like a real analysis. */
-export const AI_ANALYSIS_MIN_MS = 7200;
+export const AI_ANALYSIS_MIN_MS = 900;
 
 export type VitalSnapshot = {
   temperature?: number | null;

@@ -162,7 +162,6 @@ class AdminCreateUserSerializer(serializers.Serializer):
         return email
 
     def validate_role(self, value):
-        _ensure_unique_role(value)
         return value
 
     def create(self, validated_data):
@@ -174,13 +173,23 @@ class AdminCreateUserSerializer(serializers.Serializer):
         if role == 'admin':
             ward = ''
         user = User.objects.create_user(password=password, **validated_data)
-        profile = UserProfile.objects.create(
+        # Use get_or_create to handle cases where profile might already exist
+        profile, created = UserProfile.objects.get_or_create(
             user=user,
-            role=role,
-            full_name=full_name,
-            hospital=hospital,
-            title=dict(ROLE_CHOICES).get(role, ''),
+            defaults={
+                'role': role,
+                'full_name': full_name,
+                'hospital': hospital,
+                'title': dict(ROLE_CHOICES).get(role, ''),
+            }
         )
+        # Update profile if it already existed
+        if not created:
+            profile.role = role
+            profile.full_name = full_name
+            profile.hospital = hospital
+            profile.title = dict(ROLE_CHOICES).get(role, '')
+            profile.save()
         if ward and role != 'admin':
             profile.set_assigned_pods([ward])
         return user
