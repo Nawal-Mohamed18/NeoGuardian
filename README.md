@@ -2,7 +2,7 @@
 
 Django + React NICU clinical decision support.
 
-## Team setup (Windows)
+## Project setup (Windows)
 
 1. Install: **Python 3.12**, **Node.js**, **Git**, **Git LFS** (`git lfs install`)
 2. Clone this repo (`git lfs pull` if model files look tiny)
